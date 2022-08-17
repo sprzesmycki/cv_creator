@@ -1,10 +1,11 @@
 from flask import json, request, make_response
 
-from .database import app, db, User
+from .database import app, db, User, UserSchema
 
 
 @app.route('/user', methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
 def user():
+    user_schema = UserSchema()
     if request.method == 'GET':
         return make_response(
             "I will do that sometime later",
@@ -16,7 +17,7 @@ def user():
         db.session.add(user_details)
         db.session.commit()
         return make_response(
-            repr(user_details),
+            user_schema.dump(user_details),
             200
         )
     if request.method == 'PUT':
