@@ -1,12 +1,14 @@
-from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
-from sqlalchemy.orm import declarative_base, relationship
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import relationship
 
-engine = create_engine('sqlite:///cv_creator.db', echo=True)
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../cv_creator.db'
+db = SQLAlchemy(app)
 
-Base = declarative_base()
 
-
-class Users(Base):
+class User(db.Model):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True)
@@ -14,13 +16,13 @@ class Users(Base):
     last_name = Column(String, nullable=False)
     permission = Column(String, nullable=False)  # todo probably replace with another class
 
-    user_skills = relationship("UserSkills", back_populates="users")
+    user_skills = relationship("UserSkills", back_populates="user")
 
     def __repr__(self):
-        return f"Users(id={self.id!r}, first_name={self.first_name!r}, last_name={self.last_name!r})"
+        return f"User(id={self.id!r}, first_name={self.first_name!r}, last_name={self.last_name!r})"
 
 
-class Skills(Base):
+class Skills(db.Model):
     __tablename__ = 'skills'
 
     id = Column(Integer, primary_key=True)
@@ -32,7 +34,7 @@ class Skills(Base):
         return f"Skills(id={self.id!r}, skill_name={self.skill_name!r}"
 
 
-class UserSkills(Base):
+class UserSkills(db.Model):
     __tablename__ = 'user_skills'
 
     id = Column(Integer, primary_key=True)
@@ -40,7 +42,7 @@ class UserSkills(Base):
     skill_id = Column(Integer, ForeignKey('skills.id'), nullable=False)
     skill_level = Column(Integer, nullable=False)
 
-    users = relationship("Users", back_populates="user_skills")
+    user = relationship("User", back_populates="user_skills")
     skills = relationship("Skills", back_populates="user_skills")
 
     def __repr__(self):
