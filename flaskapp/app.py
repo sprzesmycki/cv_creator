@@ -6,12 +6,6 @@ from . import db
 app = Flask(__name__)
 
 
-@app.route('/init_db', methods=['POST'])
-def create_db():
-    db.init_db()
-    return 'Great success'
-
-
 @app.route('/add')
 def add():
     with Session(db.engine) as session:

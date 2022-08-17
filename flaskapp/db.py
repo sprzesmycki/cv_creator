@@ -46,7 +46,3 @@ class UserSkills(Base):
     def __repr__(self):
         return f"UserSkills(id={self.id!r}, user_id={self.user_id!r}, " \
                f"skill_id={self.skill_id!r}, skill_level={self.skill_level!r}) "
-
-
-def init_db():
-    Base.metadata.create_all(engine)
