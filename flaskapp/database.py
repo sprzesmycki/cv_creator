@@ -19,15 +19,24 @@ class User(db.Model):
         return f'User(id={self.id!r}, first_name={self.first_name!r}, last_name={self.last_name!r})'
 
 
-class UserSkills(db.Model):
+class Skills(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    skill_name = db.Column(db.String, nullable=False)
+    skill_name = db.Column(db.String, nullable=False, unique=True)
+
+    user_skills = db.relationship('UserSkills', backref='skills')
+
+    def __repr__(self):
+        return f'Skills(id={self.id!r}, skill_name={self.skill_name!r}'
+
+
+class UserSkills(db.Model):
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, primary_key=True)
+    skill_id = db.Column(db.Integer, db.ForeignKey('skills.id'), nullable=False, primary_key=True)
     skill_level = db.Column(db.Integer, nullable=False)
 
     def __repr__(self):
         return f'UserSkills(id={self.id!r}, user_id={self.user_id!r}, ' \
-               f'skill_name={self.skill_id!r}, skill_level={self.skill_level!r}) '
+               f'skill_id={self.skill_id!r}, skill_level={self.skill_level!r}) '
 
 
 class UserExperience(db.Model):
