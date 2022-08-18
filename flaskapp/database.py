@@ -42,7 +42,7 @@ class UserSkills(db.Model):
 class UserExperience(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    company_name = db.Column(db.String, nullable=False)
+    company_id = db.Column(db.Integer, db.ForeignKey('company.id'), nullable=False)
     job_description = db.Column(db.String, nullable=False)
     start_date = db.Column(db.DateTime, nullable=False)  # todo datetime or just int
     end_date = db.Column(db.DateTime, nullable=False)  # todo datetime or just int
@@ -52,3 +52,12 @@ class UserExperience(db.Model):
                f'company_name={self.company_name!r}, job_description={self.job_description!r}), ' \
                f'start_date={self.start_date!r}, end_date={self.end_date!r}) '
 
+
+class Company(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    company_name = db.Column(db.String, nullable=False)
+
+    user_experience = db.relationship('UserExperience', backref='company')
+
+    def __repr__(self):
+        return f'Company(id={self.id!r}, company_name={self.user_id!r}'
