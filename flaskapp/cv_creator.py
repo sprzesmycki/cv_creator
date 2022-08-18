@@ -1,6 +1,9 @@
 from flask import json, request, make_response
 
-from .database import app, db, User, UserSchema
+from flaskapp.database import db, User
+
+from flaskapp.app import app
+from flaskapp.serializers import UserSchema
 
 
 @app.route('/user', methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
@@ -46,6 +49,3 @@ def cv():
 def get_stats():
     return "I will do that sometime later"
 
-
-if __name__ == '__main__':
-    app.run()
