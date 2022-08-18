@@ -1,9 +1,13 @@
 from flask import json, request, make_response
 
-from flaskapp.database import db, User
-
-from flaskapp.app import app
+from flaskapp import models
+from flaskapp.app import app  # todo no clue how to avoid this import
+from flaskapp.database import SessionLocal, engine
 from flaskapp.serializers import UserSchema
+
+db = SessionLocal()
+
+models.Base.metadata.create_all(bind=engine)
 
 
 @app.route('/user', methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
@@ -16,9 +20,10 @@ def user():
         )
     if request.method == 'POST':
         data = json.loads(request.data)  # todo probably context-type validation required and handling missing fields
-        user_details = User(first_name=data['first_name'], last_name=data['last_name'], permission=data['permission'])
-        db.session.add(user_details)
-        db.session.commit()
+        user_details = models.User(first_name=data['first_name'], last_name=data['last_name'],
+                                   permission=data['permission'])
+        db.add(user_details)
+        db.commit()
         return make_response(
             user_schema.dump(user_details),
             200
@@ -48,4 +53,3 @@ def cv():
 @app.route('/stats', methods=["GET"])  # todo should I user methods=["GET"] even if its default one?
 def get_stats():
     return "I will do that sometime later"
-

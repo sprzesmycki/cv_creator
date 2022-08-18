@@ -1,7 +1,7 @@
 from flask_marshmallow import Marshmallow
 
 from flaskapp.app import app
-from flaskapp.database import User, UserSkills, UserExperience
+from flaskapp.models import User, UserSkills, UserExperience
 
 ma = Marshmallow(app)
 
