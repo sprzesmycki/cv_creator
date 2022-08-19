@@ -1,14 +1,12 @@
 from flask import json, request, make_response, Blueprint
 
 from flaskapp import models
-from flaskapp.database import SessionLocal, engine
+from flaskapp.database import SessionLocal
 from flaskapp.serializers import UserSchema
 
 cv_creator = Blueprint('cv_creator', __name__)
 
 db = SessionLocal()
-
-models.Base.metadata.create_all(bind=engine)
 
 
 @cv_creator.route('/user', methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
