@@ -6,14 +6,14 @@ from typing import List
 
 @dataclass
 class Skills:
-    skill_id: int
     skill_name: str
+    skill_id: int = None
 
 
 @dataclass
 class Company:
-    company_id: int
     company_name: str
+    company_id: int = None
 
 
 @dataclass

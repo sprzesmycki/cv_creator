@@ -2,13 +2,13 @@ from flask import request, make_response, Blueprint
 
 from .models.models import User
 from .serializers.db_serializers import GetUserSchema, PostUserSchema
-from .controllers.user_controller import get_user_by_user_id, add_user, update_user
+from .controllers.user_controller import get_user_by_user_id, add_user, update_user, delete_user
 
 cv_creator = Blueprint('cv_creator', __name__)
 
 
-@cv_creator.route('/user', methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
-def user_request():
+@cv_creator.route('/user', methods=["GET", "POST", "PATCH", "DELETE"])
+def user_requests():
     if request.method == 'GET':
         get_user_schema = GetUserSchema()
         user_id = request.args.get('userId')
@@ -27,11 +27,6 @@ def user_request():
             post_user_schema.dump(add_user(user)),
             201
         )
-    if request.method == 'PUT':
-        return make_response(
-            "I will do that sometime later",
-            418
-        )
     if request.method == 'PATCH':
         user = User(
             id=request.json['id'],
@@ -47,17 +42,63 @@ def user_request():
             200
         )
     if request.method == 'DELETE':
+        user_id = request.args.get('userId')
         return make_response(
-            "I will do that sometime later",
-            418
+            delete_user(user_id),  # makes no sense to call it there due to fact that 204 is not returning value
+            204
         )
 
 
-@cv_creator.route('/cv', methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
-def cv():
-    return "I will do that sometime later"
+@cv_creator.route('/user/skills', methods=["GET", "POST", "PATCH", "DELETE"])
+def skill_requests():
+    if request.method == 'GET':
+        return make_response(
+            200
+        )
+    if request.method == 'POST':
+        return make_response(
+            201
+        )
+    if request.method == 'PATCH':
+        return make_response(
+            200
+        )
+    if request.method == 'DELETE':
+        return make_response(
+            204
+        )
 
 
-@cv_creator.route('/stats', methods=["GET"])  # todo should I user methods=["GET"] even if its default one?
+@cv_creator.route('/user/experience', methods=["GET", "POST", "PATCH", "DELETE"])
+def skill_requests():
+    if request.method == 'GET':
+        return make_response(
+            200
+        )
+    if request.method == 'POST':
+        return make_response(
+            201
+        )
+    if request.method == 'PATCH':
+        return make_response(
+            200
+        )
+    if request.method == 'DELETE':
+        return make_response(
+            204
+        )
+
+
+@cv_creator.route('/cv', methods=["GET"])
+def cv_requests():
+    return make_response(
+        # get_cv(cv_id)
+        200
+    )
+
+
+@cv_creator.route('/stats', methods=["GET"])
 def get_stats():
-    return "I will do that sometime later"
+    return make_response(
+        200
+    )

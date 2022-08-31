@@ -1,4 +1,4 @@
-from sqlalchemy import select, update
+from sqlalchemy import select, update, delete
 
 from cv_creator.database import SessionLocal
 from cv_creator.models.db_models import User
@@ -26,3 +26,15 @@ def update_user(user) -> User:
     stmt = update(User).where(User.id == user.id).values()  # todo values? cannot pass an object?
     db.execute(stmt)
     return get_user_by_user_id(user_id=user.id)
+
+
+def set_user_permission(user) -> User:
+    stmt = update(User).where(User.id == user.id).values(permission=user.permission)
+    db.execute(stmt)
+    return get_user_by_user_id(user_id=user.id)
+
+
+def delete_user(user_id) -> None:
+    stmt = delete(User).where(User.id == user_id)
+    db.execute(stmt)
+    return f'User successfully removed - user_id {user_id}'
