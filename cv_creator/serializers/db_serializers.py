@@ -1,6 +1,6 @@
 from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field
 
-from .models import User, UserSkills, UserExperience, Skills, Company
+from cv_creator.models.db_models import User, UserSkills, UserExperience, Skills, Company
 
 
 class PostUserSchema(SQLAlchemySchema):
