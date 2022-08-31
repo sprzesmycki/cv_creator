@@ -1,9 +1,12 @@
 from flask import Flask
-from .routes import cv_creator
+from cv_creator.routes import cv_creator
 
-app = Flask(__name__)
-app.register_blueprint(cv_creator)
+
+def create_app():
+    app = Flask(__name__)
+    app.register_blueprint(cv_creator)
+    return app
 
 
 if __name__ == '__main__':
-    app.run()
+    create_app().run()

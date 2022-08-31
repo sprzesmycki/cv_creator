@@ -46,8 +46,8 @@ class UserExperience(Base):
     user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
     company_id = Column(Integer, ForeignKey('company.id'), nullable=False)
     job_description = Column(String, nullable=False)
-    start_date = Column(DateTime, nullable=False)  # todo datetime or just int
-    end_date = Column(DateTime, nullable=False)  # todo datetime or just int
+    start_date = Column(DateTime, nullable=False)
+    end_date = Column(DateTime, nullable=False)
 
     def __repr__(self):
         return f'UserExperience(id={self.id!r}, user_id={self.user_id!r}, ' \
