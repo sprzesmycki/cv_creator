@@ -20,9 +20,10 @@ def add_user(request) -> User:
 def update_user(request) -> User:
     schema = CompleteUserSchema()
     user_id = request.json.get('id')
-    user = db.query(User).get(user_id)
-    schema.load(request.json, instance=user, partial=True, session=db)
-    return get_user_by_user_id(user_id=user.id)
+    user = get_user_by_user_id(user_id)
+    if user is not None:
+        schema.load(request.json, instance=user, partial=True, session=db)
+        return get_user_by_user_id(user_id=user.id)
 
 
 def delete_user(user_id):
