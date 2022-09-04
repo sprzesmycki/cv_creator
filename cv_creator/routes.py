@@ -1,8 +1,7 @@
 from flask import request, make_response, Blueprint
 
-from .models.models import User
-from .serializers.db_serializers import GetUserSchema, PostUserSchema
 from .controllers.user_controller import get_user_by_user_id, add_user, update_user, delete_user
+from .serializers.db_serializers import GetUserSchema, CompleteUserSchema
 
 cv_creator = Blueprint('cv_creator', __name__)
 
@@ -10,41 +9,32 @@ cv_creator = Blueprint('cv_creator', __name__)
 @cv_creator.route('/user', methods=["GET", "POST", "PATCH", "DELETE"])
 def user_requests():
     if request.method == 'GET':
-        get_user_schema = GetUserSchema()
         user_id = request.args.get('userId')
+        user = get_user_by_user_id(user_id)
+        get_user_schema = GetUserSchema()
         return make_response(
-            get_user_schema.dump(get_user_by_user_id(user_id)),
+            get_user_schema.dump(user),
             200
         )
     if request.method == 'POST':
-        user = User(
-            first_name=request.json['first_name'],
-            last_name=request.json['last_name'],
-            permission=request.json['permission']
-        )
-        post_user_schema = PostUserSchema()
+        new_user = add_user(request)
+        post_user_schema = CompleteUserSchema()
         return make_response(
-            post_user_schema.dump(add_user(user)),
+            post_user_schema.dump(new_user),
             201
         )
     if request.method == 'PATCH':
-        user = User(
-            id=request.json['id'],
-            first_name=request.json['first_name'],
-            last_name=request.json['last_name'],
-            permission=request.json['permission'],
-            user_skills=request.json['user_skills'],
-            user_experience=request.json['user_experience']
-        )
-        post_user_schema = PostUserSchema()
+        user = update_user(request)
+        post_user_schema = CompleteUserSchema()
         return make_response(
-            post_user_schema.dump(update_user(user)),
+            post_user_schema.dump(user),
             200
         )
     if request.method == 'DELETE':
-        user_id = request.args.get('userId')
+        user_id = request.args.get('user_id')
+        delete_user(user_id)
         return make_response(
-            delete_user(user_id),  # makes no sense to call it there due to fact that 204 is not returning value
+            '',
             204
         )
 
@@ -70,7 +60,7 @@ def skill_requests():
 
 
 @cv_creator.route('/user/experience', methods=["GET", "POST", "PATCH", "DELETE"])
-def skill_requests():
+def experience_requests():
     if request.method == 'GET':
         return make_response(
             200

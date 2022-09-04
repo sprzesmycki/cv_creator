@@ -1,40 +1,32 @@
-from sqlalchemy import select, update, delete
-
 from cv_creator.database import SessionLocal
 from cv_creator.models.db_models import User
+from cv_creator.serializers.db_serializers import CompleteUserSchema
 
 db = SessionLocal()
 
 
 def get_user_by_user_id(user_id) -> User:
-    stmt = select(User).where(User.id == user_id)
-    user = getattr(db.execute(stmt).one(), 'User')
-    return user  # ugly but works
+    return db.query(User).filter(User.id == user_id).first()
 
 
-def add_user(user) -> User:
-    db_user = User(first_name=user.first_name, last_name=user.last_name,
-                   permission=user.permission)
-    db.add(db_user)
+def add_user(request) -> User:
+    schema = CompleteUserSchema()
+    user = schema.load(request.json, session=db)
+    db.add(user)
     db.commit()
-    return db_user
+    return user
 
 
-def update_user(user) -> User:
-    current_user = get_user_by_user_id(user_id=user.id)
-    current_user.update(user)  # todo something smart will be there
-    stmt = update(User).where(User.id == user.id).values()  # todo values? cannot pass an object?
-    db.execute(stmt)
+def update_user(request) -> User:
+    schema = CompleteUserSchema()
+    user_id = request.json.get('id')
+    user = db.query(User).get(user_id)
+    schema.load(request.json, instance=user, partial=True, session=db)
     return get_user_by_user_id(user_id=user.id)
 
 
-def set_user_permission(user) -> User:
-    stmt = update(User).where(User.id == user.id).values(permission=user.permission)
-    db.execute(stmt)
-    return get_user_by_user_id(user_id=user.id)
-
-
-def delete_user(user_id) -> None:
-    stmt = delete(User).where(User.id == user_id)
-    db.execute(stmt)
-    return f'User successfully removed - user_id {user_id}'
+def delete_user(user_id):
+    user = db.get(User, user_id)
+    if user is not None:
+        db.delete(user)
+        db.commit()

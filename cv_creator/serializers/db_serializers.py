@@ -3,7 +3,7 @@ from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field
 from cv_creator.models.db_models import User, UserSkills, UserExperience, Skills, Company
 
 
-class PostUserSchema(SQLAlchemySchema):
+class CompleteUserSchema(SQLAlchemySchema):
     class Meta:
         model = User
         include_relationships = True
