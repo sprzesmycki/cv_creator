@@ -1,6 +1,5 @@
 from cv_creator.database import SessionLocal
 from cv_creator.models.db_models import User
-from cv_creator.serializers.db_serializers import CompleteUserSchema
 
 db = SessionLocal()
 
@@ -9,20 +8,17 @@ def get_user_by_user_id(user_id) -> User:
     return db.query(User).filter(User.id == user_id).first()
 
 
-def add_user(request) -> User:
-    schema = CompleteUserSchema()
-    user = schema.load(request.json, session=db)
-    db.add(user)
+def add_user(post_user) -> User:
+    db.add(post_user)
     db.commit()
-    return user
+    return post_user
 
 
-def update_user(request) -> User:
-    schema = CompleteUserSchema()
-    user_id = request.json.get('id')
+def update_user(user_id, patch_user) -> User:
     user = get_user_by_user_id(user_id)
     if user is not None:
-        schema.load(request.json, instance=user, partial=True, session=db)
+        db.query(User).filter(User.id == user_id).update(patch_user)
+        db.commit()
         return get_user_by_user_id(user_id=user.id)
 
 

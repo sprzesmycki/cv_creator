@@ -1,3 +1,4 @@
+from marshmallow import post_load
 from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field
 
 from cv_creator.models.db_models import User, UserSkills, UserExperience, Skills, Company
@@ -15,6 +16,27 @@ class CompleteUserSchema(SQLAlchemySchema):
     permission = auto_field()
     user_skills = auto_field()
     user_experience = auto_field()
+
+    @post_load
+    def make_user(self, data, **kwargs):
+        return User(**data)
+
+
+class PostUserSchema(SQLAlchemySchema):
+    class Meta:
+        model = User
+        include_relationships = True
+        load_instance = True
+
+    first_name = auto_field()
+    last_name = auto_field()
+    permission = auto_field()
+    user_skills = auto_field()
+    user_experience = auto_field()
+
+    @post_load
+    def make_user(self, data, **kwargs):
+        return User(**data)
 
 
 class GetUserSchema(SQLAlchemySchema):
