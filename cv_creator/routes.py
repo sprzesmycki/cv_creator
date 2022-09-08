@@ -1,8 +1,7 @@
-import json
-
 from flask import request, make_response, Blueprint
 
 from .controllers.user_controller import get_user_by_user_id, add_user, update_user, delete_user
+from .models.models import User
 from .serializers.db_serializers import GetUserSchema, CompleteUserSchema, PostUserSchema
 
 cv_creator = Blueprint('cv_creator', __name__)
@@ -13,28 +12,23 @@ def user_requests():
     if request.method == 'GET':
         user_id = request.args.get('user_id')
         user = get_user_by_user_id(user_id)
-        get_user_schema = GetUserSchema()
         return make_response(
-            get_user_schema.dump(user),
+            GetUserSchema().dump(user),
             200
         )
     if request.method == 'POST':
-        user_payload = json.dumps(request.json)
-        post_user = PostUserSchema().load(user_payload)
+        post_user = User.Schema().load(request.json)
         new_user = add_user(post_user)
-        complete_user_schema = CompleteUserSchema()
         return make_response(
-            complete_user_schema.dump(new_user),
+            CompleteUserSchema().dump(new_user),
             201
         )
     if request.method == 'PATCH':
         user_id = request.args.get('user_id')
-        post_user_schema = PostUserSchema()
-        post_user = post_user_schema.dump(request.json)
+        post_user = PostUserSchema().dump(request.json)
         user = update_user(user_id, post_user)
-        complete_user_schema = CompleteUserSchema()
         return make_response(
-            complete_user_schema.dump(user),
+            CompleteUserSchema().dump(user),
             200
         )
     if request.method == 'DELETE':

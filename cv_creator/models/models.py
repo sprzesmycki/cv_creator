@@ -1,7 +1,8 @@
-from dataclasses import dataclass, field
+from dataclasses import field
 from datetime import datetime
-
 from typing import List
+
+from marshmallow_dataclass import dataclass
 
 
 @dataclass
