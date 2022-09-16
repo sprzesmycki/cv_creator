@@ -1,12 +1,12 @@
 from marshmallow import post_load
 from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field
 
-from cv_creator.models.db_models import User, UserSkills, UserExperience, Skills, Company
+from cv_creator.models.db_models import UserDb, UserSkillsDb, UserExperienceDb, SkillsDb, CompanyDb
 
 
 class CompleteUserSchema(SQLAlchemySchema):
     class Meta:
-        model = User
+        model = UserDb
         include_relationships = True
         load_instance = True
 
@@ -19,12 +19,12 @@ class CompleteUserSchema(SQLAlchemySchema):
 
     @post_load
     def make_user(self, data, **kwargs):
-        return User(**data)
+        return UserDb(**data)
 
 
 class PostUserSchema(SQLAlchemySchema):
     class Meta:
-        model = User
+        model = UserDb
         include_relationships = True
         load_instance = True
 
@@ -34,14 +34,10 @@ class PostUserSchema(SQLAlchemySchema):
     user_skills = auto_field()
     user_experience = auto_field()
 
-    @post_load
-    def make_user(self, data, **kwargs):
-        return User(**data)
-
 
 class GetUserSchema(SQLAlchemySchema):
     class Meta:
-        model = User
+        model = UserDb
         include_relationships = True
         load_instance = True
 
@@ -51,29 +47,29 @@ class GetUserSchema(SQLAlchemySchema):
     user_experience = auto_field()
 
 
-class SkillsSchema(SQLAlchemySchema):
+class SkillsDbSchema(SQLAlchemySchema):
     class Meta:
-        model = Skills
+        model = SkillsDb
         include_relationships = True
         load_instance = True
 
 
-class UserSkillsSchema(SQLAlchemySchema):
+class UserSkillsDbSchema(SQLAlchemySchema):
     class Meta:
-        model = UserSkills
+        model = UserSkillsDb
         include_relationships = True
         load_instance = True
 
 
-class UserExperienceSchema(SQLAlchemySchema):
+class UserExperienceDbSchema(SQLAlchemySchema):
     class Meta:
-        model = UserExperience
+        model = UserExperienceDb
         include_relationships = True
         load_instance = True
 
 
-class CompanySchema(SQLAlchemySchema):
+class CompanyDbSchema(SQLAlchemySchema):
     class Meta:
-        model = Company
+        model = CompanyDb
         include_relationships = True
         load_instance = True

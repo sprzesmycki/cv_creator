@@ -11,6 +11,7 @@ SQLAlchemy = "^1.4.40"
 marshmallow-sqlalchemy = "^0.28.1"
 alembic = "^1.8.1"
 psycopg2-binary = "^2.9.3"
+marshmallow-dataclass = "^8.5.8"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"
