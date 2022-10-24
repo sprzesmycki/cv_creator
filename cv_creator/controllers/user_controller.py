@@ -1,33 +1,22 @@
-from cv_creator.database import SessionLocal
-from cv_creator.models.db_models import UserDb
-from cv_creator.serializers.api_serializers import UserSchema
-from cv_creator.serializers.db_serializers import PostUserSchema
-
-db = SessionLocal()
+from cv_creator.models.models import User
+from cv_creator.storage.postgres import repository
 
 
-def get_user_by_user_id(user_id) -> UserDb:
-    return db.query(UserDb).filter(UserDb.id == user_id).first()
+def get_user_by_user_id(user_id) -> User:
+    return repository.get_user_by_user_id(user_id)
 
 
-def add_user(post_user) -> UserDb:
-    user_api = UserSchema().dump(post_user)
-    user_db = PostUserSchema().load(user_api, session=db)
-    db.add(user_db)
-    db.commit()
-    return user_db
+def add_user(post_user) -> User:
+    return repository.add_user(post_user)
 
 
-def update_user(user_id, patch_user) -> UserDb:
-    user = get_user_by_user_id(user_id)
+def update_user(user_id, patch_user) -> User:
+    user = repository.get_user_by_user_id(user_id)
     if user is not None:
-        db.query(UserDb).filter(UserDb.id == user_id).update(patch_user)
-        db.commit()
-        return get_user_by_user_id(user_id=user.id)
+        return repository.update_user(patch_user, user, user_id)
 
 
 def delete_user(user_id):
-    user = db.get(UserDb, user_id)
+    user = repository.get_user_by_user_id(user_id)
     if user is not None:
-        db.delete(user)
-        db.commit()
+        delete_user(user)

@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 
-from cv_creator.database import Base
+from cv_creator.storage.postgres.database import Base
 
 
 class UserDb(Base):

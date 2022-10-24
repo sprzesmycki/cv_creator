@@ -9,35 +9,36 @@ cv_creator = Blueprint('cv_creator', __name__)
 
 @cv_creator.route('/user', methods=["GET", "POST", "PATCH", "DELETE"])
 def user_requests():
-    if request.method == 'GET':
-        user_id = request.args.get('user_id')
-        user = get_user_by_user_id(user_id)
-        return make_response(
-            GetUserSchema().dump(user),
-            200
-        )
-    if request.method == 'POST':
-        post_user = User.Schema().load(request.json)
-        new_user = add_user(post_user)
-        return make_response(
-            CompleteUserSchema().dump(new_user),
-            201
-        )
-    if request.method == 'PATCH':
-        user_id = request.args.get('user_id')
-        post_user = PostUserSchema().dump(request.json)
-        user = update_user(user_id, post_user)
-        return make_response(
-            CompleteUserSchema().dump(user),
-            200
-        )
-    if request.method == 'DELETE':
-        user_id = request.args.get('user_id')
-        delete_user(user_id)
-        return make_response(
-            '',
-            204
-        )
+    match request.method:
+        case 'GET':
+            user_id = request.args.get('user_id')
+            user = get_user_by_user_id(user_id)
+            return make_response(
+                GetUserSchema().dump(user),
+                200
+            )
+        case 'POST':
+            post_user = User.Schema().load(request.json)
+            new_user = add_user(post_user)
+            return make_response(
+                CompleteUserSchema().dump(new_user),
+                201
+            )
+        case 'PATCH':
+            user_id = request.args.get('user_id')
+            post_user = PostUserSchema().dump(request.json)
+            user = update_user(user_id, post_user)
+            return make_response(
+                CompleteUserSchema().dump(user),
+                200
+            )
+        case 'DELETE':
+            user_id = request.args.get('user_id')
+            delete_user(user_id)
+            return make_response(
+                '',
+                204
+            )
 
 
 @cv_creator.route('/user/skills', methods=["GET", "POST", "PATCH", "DELETE"])

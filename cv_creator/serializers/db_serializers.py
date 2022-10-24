@@ -1,7 +1,7 @@
 from marshmallow import post_load
 from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field
 
-from cv_creator.models.db_models import UserDb, UserSkillsDb, UserExperienceDb, SkillsDb, CompanyDb
+from cv_creator.storage.postgres.db_models import UserDb, UserSkillsDb, UserExperienceDb, SkillsDb, CompanyDb
 
 
 class CompleteUserSchema(SQLAlchemySchema):
