@@ -4,7 +4,9 @@ from cv_creator.storage.postgres.db_models import UserDb
 
 
 def get_user_by_user_id(user_id) -> User:
-    return repository.get_user_by_user_id(user_id)
+    user_db = repository.get_user_by_user_id(user_id)
+    user = User.Schema().load(user_db)  # todo not tested if this works
+    return user
 
 
 def add_user(post_user) -> User:

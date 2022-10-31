@@ -11,7 +11,7 @@ cv_creator = Blueprint('cv_creator', __name__)
 def user_requests():
     match request.method:
         case 'GET':
-            user_id = request.args.get('user_id')
+            user_id = request.args.get('userId')
             user = get_user_by_user_id(user_id)
             return make_response(
                 GetUserSchema().dump(user),
@@ -25,7 +25,7 @@ def user_requests():
                 201
             )
         case 'PATCH':
-            user_id = request.args.get('user_id')
+            user_id = request.args.get('userId')
             post_user = PostUserSchema().dump(request.json)
             user = update_user(user_id, post_user)
             return make_response(
@@ -33,7 +33,7 @@ def user_requests():
                 200
             )
         case 'DELETE':
-            user_id = request.args.get('user_id')
+            user_id = request.args.get('userId')
             delete_user(user_id)
             return make_response(
                 '',

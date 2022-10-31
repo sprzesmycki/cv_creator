@@ -1,2 +1,6 @@
 /cv_creator.db
 /.idea
+/.env
+/.coverage
+/.mypy_cache
+/.pytest_cache
