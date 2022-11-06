@@ -84,7 +84,7 @@ def test_delete_user_method_calls(client):
     assert delete_user_mock.call_args == call("99")
 
 
-def test_get_user_values(client):  # are unit tests without mocks needed?
+def test_get_user_values(client):
     first_name = "Seb"
     last_name = "Prz"
     permission = "admin"
