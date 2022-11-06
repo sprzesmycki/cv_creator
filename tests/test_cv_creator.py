@@ -1,9 +1,6 @@
 import mock
 import pytest
-import requests
-import requests_mock
 from mock import call
-from requests_mock_flask import add_flask_app_to_mock
 
 from cv_creator.app import create_app
 from cv_creator.models.models import User
@@ -33,42 +30,7 @@ def runner(app):
     return app.test_cli_runner()
 
 
-def test_request_get_user(client):
-    response = client.get("/user?userId=1")
-    assert response.status_code == 200
-    assert b'{"first_name":"seb","last_name":"as","user_experience":[],"user_skills":[]}\n' in response.data
-
-
-def test_request_post_user(client):
-    first_name = "seb"
-    last_name = "as"
-    role = "admin"
-    response = client.post("/user", json={
-        "first_name": ("%s" % first_name),
-        "last_name": ("%s" % last_name),
-        "permission": ("%s" % role)
-    })
-    assert response.status_code == 201
-    assert response.json["first_name"] == first_name
-    assert response.json["last_name"] == last_name
-    assert response.json["permission"] == role
-
-
-def test_requests_mock_context_manager(app) -> None:
-    with requests_mock.Mocker() as resp_m:
-        add_flask_app_to_mock(
-            mock_obj=resp_m,
-            flask_app=app,
-            base_url='http://127.0.0.1:5000/user?userId=3'
-        )
-
-        response = requests.get('http://127.0.0.1:5000/user?userId=3')
-
-    assert response.status_code == 200
-    assert response.text == 'Hello, World!'
-
-
-def test_test(client):
+def test_get_user_method_calls(client):
     with mock.patch("cv_creator.routes.get_user_by_user_id") as get_user_by_user_id_mock:
         with mock.patch("cv_creator.routes.add_user") as add_user_mock:
             with mock.patch("cv_creator.routes.update_user") as update_user_mock:
@@ -82,7 +44,47 @@ def test_test(client):
     assert not delete_user_mock.called
 
 
-def test_response(client):
+def test_post_user_method_calls(client):
+    with mock.patch("cv_creator.routes.get_user_by_user_id") as get_user_by_user_id_mock:
+        with mock.patch("cv_creator.routes.add_user") as add_user_mock:
+            with mock.patch("cv_creator.routes.update_user") as update_user_mock:
+                with mock.patch("cv_creator.routes.delete_user") as delete_user_mock:
+                    client.post("/user")  # todo don't know yet how to add body in mock or mock value
+
+    assert add_user_mock.called
+    assert not get_user_by_user_id_mock.called
+    assert not update_user_mock.called
+    assert not delete_user_mock.called
+
+
+def test_patch_user_method_calls(client):
+    with mock.patch("cv_creator.routes.get_user_by_user_id") as get_user_by_user_id_mock:
+        with mock.patch("cv_creator.routes.add_user") as add_user_mock:
+            with mock.patch("cv_creator.routes.update_user") as update_user_mock:
+                with mock.patch("cv_creator.routes.delete_user") as delete_user_mock:
+                    client.patch("/user?userId=99")  # todo don't know yet how to add body in mock or mock value
+
+    assert not add_user_mock.called
+    assert not get_user_by_user_id_mock.called
+    assert update_user_mock.called
+    assert not delete_user_mock.called
+
+
+def test_delete_user_method_calls(client):
+    with mock.patch("cv_creator.routes.get_user_by_user_id") as get_user_by_user_id_mock:
+        with mock.patch("cv_creator.routes.add_user") as add_user_mock:
+            with mock.patch("cv_creator.routes.update_user") as update_user_mock:
+                with mock.patch("cv_creator.routes.delete_user") as delete_user_mock:
+                    client.delete("/user?userId=99")
+
+    assert not get_user_by_user_id_mock.called
+    assert not add_user_mock.called
+    assert not update_user_mock.called
+    assert delete_user_mock.called
+    assert delete_user_mock.call_args == call("99")
+
+
+def test_get_user_values(client):  # are unit tests without mocks needed?
     first_name = "Seb"
     last_name = "Prz"
     permission = "admin"
