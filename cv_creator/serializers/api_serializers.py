@@ -21,8 +21,8 @@ class CompanySchema(Schema):
 class UserExperienceSchema(Schema):
     company = fields.Nested(CompanySchema())
     job_description = fields.Str()
-    start_date: fields.DateTime()
-    end_date: fields.DateTime()
+    start_date: fields.DateTime
+    end_date: fields.DateTime
 
 
 class UserSchema(Schema):
