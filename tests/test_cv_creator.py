@@ -75,7 +75,6 @@ def test_patch_user_method_calls(client):
         with mock.patch("cv_creator.routes.add_user") as add_user_mock:
             with mock.patch("cv_creator.routes.update_user") as update_user_mock:
                 with mock.patch("cv_creator.routes.delete_user") as delete_user_mock:
-                    # todo don't know yet how to add body in mock or mock value
                     client.patch("/user?userId=99", json={
                         "first_name": "huhhfffdfgfgfue",
                         "id": "22",
