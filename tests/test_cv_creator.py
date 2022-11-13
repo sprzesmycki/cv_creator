@@ -49,7 +49,20 @@ def test_post_user_method_calls(client):
         with mock.patch("cv_creator.routes.add_user") as add_user_mock:
             with mock.patch("cv_creator.routes.update_user") as update_user_mock:
                 with mock.patch("cv_creator.routes.delete_user") as delete_user_mock:
-                    client.post("/user")  # todo don't know yet how to add body in mock or mock value
+                    client.post("/user", json={
+                        "first_name": "seb",
+                        "last_name": "as",
+                        "permission": "admin",
+                        "user_skills": [
+                                {
+                                    "skill": {
+                                        "skill_id": 0,
+                                        "skill_name": "Nunu"
+                                    },
+                                    "skill_level": 3
+                                }
+                                ]
+                    })
 
     assert add_user_mock.called
     assert not get_user_by_user_id_mock.called
@@ -62,7 +75,12 @@ def test_patch_user_method_calls(client):
         with mock.patch("cv_creator.routes.add_user") as add_user_mock:
             with mock.patch("cv_creator.routes.update_user") as update_user_mock:
                 with mock.patch("cv_creator.routes.delete_user") as delete_user_mock:
-                    client.patch("/user?userId=99")  # todo don't know yet how to add body in mock or mock value
+                    # todo don't know yet how to add body in mock or mock value
+                    client.patch("/user?userId=99", json={
+                        "first_name": "huhhfffdfgfgfue",
+                        "id": "22",
+                        "last_name": "sebzodfdfnek"
+                    })
 
     assert not add_user_mock.called
     assert not get_user_by_user_id_mock.called
@@ -89,7 +107,8 @@ def test_get_user_values(client):
     last_name = "Prz"
     permission = "admin"
     with mock.patch("cv_creator.routes.get_user_by_user_id") as get_user_by_user_id_mock:
-        get_user_by_user_id_mock.return_value = User(first_name=first_name, last_name=last_name, permission=permission)
+        get_user_by_user_id_mock.return_value = User(
+            first_name=first_name, last_name=last_name, permission=permission)
         response = client.get("/user?userId=99")
 
     assert response.status_code == 200
