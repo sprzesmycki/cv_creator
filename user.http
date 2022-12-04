@@ -1,0 +1,36 @@
+DELETE http://127.0.0.1:5000/user?user_id=24
+Accept: application/json
+
+###
+PATCH http://127.0.0.1:5000/user?user_id=24
+Content-Type: application/json
+
+{
+  "first_name": "huhhfffdfgfgfue",
+  "id": "22",
+  "last_name": "sebzodfdfnek"
+}
+
+###
+POST http://127.0.0.1:5000/user
+Content-Type: application/json
+
+{
+  "first_name": "seb",
+  "last_name": "as",
+  "permission": "admin",
+  "user_skills": [
+    {
+      "skill": {
+        "skill_id": 0,
+        "skill_name": "Nunu"
+      },
+      "skill_level": 3
+    }
+  ]
+}
+
+###
+GET http://127.0.0.1:5000/user?userId=1
+
+

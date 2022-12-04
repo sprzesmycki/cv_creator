@@ -54,14 +54,14 @@ def test_post_user_method_calls(client):
                         "last_name": "as",
                         "permission": "admin",
                         "user_skills": [
-                                {
-                                    "skill": {
-                                        "skill_id": 0,
-                                        "skill_name": "Nunu"
-                                    },
-                                    "skill_level": 3
-                                }
-                                ]
+                            {
+                                "skill": {
+                                    "skill_id": 0,
+                                    "skill_name": "Nunu"
+                                },
+                                "skill_level": 3
+                            }
+                        ]
                     })
 
     assert add_user_mock.called
@@ -85,6 +85,22 @@ def test_patch_user_method_calls(client):
     assert not get_user_by_user_id_mock.called
     assert update_user_mock.called
     assert not delete_user_mock.called
+
+
+# isn't order confusing? its reversed in params
+@mock.patch("cv_creator.routes.get_user_by_user_id")
+@mock.patch("cv_creator.routes.add_user")
+@mock.patch("cv_creator.routes.update_user")
+@mock.patch("cv_creator.routes.delete_user")
+def test_delete_user_method_calls_with_decorators(delete_user_mock, update_user_mock, add_user_mock,
+                                                  get_user_by_user_id_mock, client):
+    client.delete("/user?userId=99")
+
+    assert not get_user_by_user_id_mock.called
+    assert not add_user_mock.called
+    assert not update_user_mock.called
+    assert delete_user_mock.called
+    assert delete_user_mock.call_args == call("99")
 
 
 def test_delete_user_method_calls(client):
