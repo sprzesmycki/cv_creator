@@ -8,3 +8,12 @@ TO DO:
 TO READ:
 
 * pytest parametrize
+
+
+
+pytest raises
+
+error handler -> json with details
+404 -> json page not found "message"
+500 -> json internal server error
+status code stays the same - just extra message

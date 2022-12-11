@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 from marshmallow import ValidationError
 
 from cv_creator.routes import cv_creator
@@ -14,15 +14,15 @@ def create_app():
 
 
 def validation_handler(e):
-    return e.messages, 422
+    return jsonify({'message': e.messages}), 422
 
 
 def page_not_found_handler(e):
-    return 'Better luck next time!', 200  # todo not sure what to do in handlers
+    return jsonify({'message': 'Better luck next time!'}), 404
 
 
 def server_error_handler(e):
-    return e, 500  # todo not sure what to do in handlers
+    return jsonify({'error': 'An internal server error occurred'}), 500
 
 
 if __name__ == '__main__':

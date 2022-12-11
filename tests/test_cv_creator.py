@@ -3,7 +3,10 @@ import pytest
 from mock import call
 
 from cv_creator.app import create_app
+from cv_creator.controllers.user_controller import add_user, update_user, delete_user, get_user_by_user_id
 from cv_creator.models.models import User
+from cv_creator.storage.postgres import repository
+from cv_creator.storage.postgres.db_models import UserDb
 
 
 @pytest.fixture()
@@ -87,7 +90,6 @@ def test_patch_user_method_calls(client):
     assert not delete_user_mock.called
 
 
-# isn't order confusing? its reversed in params
 @mock.patch("cv_creator.routes.get_user_by_user_id")
 @mock.patch("cv_creator.routes.add_user")
 @mock.patch("cv_creator.routes.update_user")
@@ -130,3 +132,81 @@ def test_get_user_values(client):
     assert response.json["first_name"] == first_name
     assert response.json["last_name"] == last_name
     assert "permission" not in response.json
+
+
+def test_add_user_controller(client):
+    user = mock.create_autospec(User)
+    user_db = mock.create_autospec(UserDb)
+    user_db.id = 17
+    user_db.first_name = 'seb'
+    user_db.last_name = 'prz'
+    user_db.permission = 'admin'
+
+    with mock.patch('cv_creator.controllers.user_controller.repository.add_user', return_value=user_db):
+        user_id = add_user(user)
+
+    assert user_id == user_db.id
+
+
+def test_update_user_controller_none(client):
+    user = mock.create_autospec(User)
+
+    with mock.patch('cv_creator.controllers.user_controller.repository.get_user_by_user_id', return_value=None):
+        user = update_user(user.id, user)
+
+    assert user is None
+
+
+def test_update_user_controller(client):  # todo fails as expected fix the code
+    user = mock.create_autospec(User)
+    user_db = mock.create_autospec(UserDb)
+    user_db.id = 17
+    user_db.first_name = 'seb'
+    user_db.last_name = 'prz'
+    user_db.permission = 'admin'
+
+    with mock.patch('cv_creator.controllers.user_controller.repository.get_user_by_user_id', return_value=user_db):
+        with mock.patch('cv_creator.controllers.user_controller.repository.update_user', return_value=user_db):
+            patched_user_db = update_user(user.id, user)
+
+    assert patched_user_db == user
+
+
+def test_delete_user_controller_none(client):
+    user_id = mock.create_autospec(int)
+
+    with mock.patch('cv_creator.controllers.user_controller.repository.get_user_by_user_id', return_value=None):
+        delete_user(user_id)
+
+    assert not repository.delete_user.called  # todo how to check if method was called
+
+
+def test_delete_user_controller(client):
+    user_db = mock.create_autospec(UserDb)
+    user_id = mock.create_autospec(int)
+
+    with mock.patch('cv_creator.controllers.user_controller.repository.get_user_by_user_id', return_value=user_db):
+        delete_user(user_id)
+
+    assert repository.delete_user.called  # todo how to check if method was called
+
+
+def test_get_user_controller_none(client):
+    user = mock.create_autospec(User)
+    user_id = mock.create_autospec(int)
+
+    with mock.patch('cv_creator.controllers.user_controller.repository.get_user_by_user_id', return_value=None):
+        get_user_by_user_id(user_id)
+
+    assert user is None
+
+
+def test_get_user_controller(client):  # todo fails as expected fix the code
+    user = mock.create_autospec(User)
+    user_db = mock.create_autospec(UserDb)
+    user_id = mock.create_autospec(int)
+
+    with mock.patch('cv_creator.controllers.user_controller.repository.get_user_by_user_id', return_value=user_db):
+        user_from_db = get_user_by_user_id(user_id)
+
+    assert user == user_from_db
