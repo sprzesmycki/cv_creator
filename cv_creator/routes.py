@@ -1,4 +1,4 @@
-from flask import request, make_response, Blueprint
+from flask import request, make_response, Blueprint, jsonify
 
 from .controllers.user_controller import get_user_by_user_id, add_user, update_user, delete_user
 from .models.models import User
@@ -12,14 +12,14 @@ def user_requests():
     match request.method:
         case 'GET':
             user_id = request.args.get('userId')
-            user = get_user_by_user_id(user_id)
+            user: User = get_user_by_user_id(user_id)
             return make_response(
                 GetUserSchema().dump(user),
                 200
             )
         case 'POST':
             post_user = User.Schema().load(request.json)
-            new_user = add_user(post_user)
+            new_user: User = add_user(post_user)
             return make_response(
                 CompleteUserSchema().dump(new_user),
                 201
@@ -27,7 +27,7 @@ def user_requests():
         case 'PATCH':
             user_id = request.args.get('userId')
             post_user = PostUserSchema().dump(request.json)
-            user = update_user(user_id, post_user)
+            user: User = update_user(user_id, post_user)
             return make_response(
                 CompleteUserSchema().dump(user),
                 200
@@ -35,10 +35,7 @@ def user_requests():
         case 'DELETE':
             user_id = request.args.get('userId')
             delete_user(user_id)
-            return make_response(
-                '',
-                204
-            )
+            return jsonify({'message': f'User with id {user_id} removed!'}), 204
 
 
 @cv_creator.route('/user/skills', methods=["GET", "POST", "PATCH", "DELETE"])
