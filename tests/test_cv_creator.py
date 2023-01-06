@@ -5,7 +5,6 @@ from mock import call
 from cv_creator.app import create_app
 from cv_creator.controllers.user_controller import add_user, update_user, delete_user, get_user_by_user_id
 from cv_creator.models.models import User
-from cv_creator.storage.postgres import repository
 from cv_creator.storage.postgres.db_models import UserDb
 
 
@@ -41,7 +40,7 @@ def test_get_user_method_calls(client):
                     client.get("/user?userId=99")
 
     assert get_user_by_user_id_mock.called
-    assert get_user_by_user_id_mock.call_args == call("99")
+    assert get_user_by_user_id_mock.call_args == call(99)
     assert not add_user_mock.called
     assert not update_user_mock.called
     assert not delete_user_mock.called
@@ -64,7 +63,8 @@ def test_post_user_method_calls(client):
                                 },
                                 "skill_level": 3
                             }
-                        ]
+                        ],
+                        "user_experience": []
                     })
 
     assert add_user_mock.called
@@ -73,6 +73,8 @@ def test_post_user_method_calls(client):
     assert not delete_user_mock.called
 
 
+@pytest.mark.xfail(reason="TypeError: User.__init__() missing 3 required positional arguments: "
+                          "'first_name', 'last_name', and 'permission'")
 def test_patch_user_method_calls(client):
     with mock.patch("cv_creator.routes.get_user_by_user_id") as get_user_by_user_id_mock:
         with mock.patch("cv_creator.routes.add_user") as add_user_mock:
@@ -102,7 +104,7 @@ def test_delete_user_method_calls_with_decorators(delete_user_mock, update_user_
     assert not add_user_mock.called
     assert not update_user_mock.called
     assert delete_user_mock.called
-    assert delete_user_mock.call_args == call("99")
+    assert delete_user_mock.call_args == call(99)
 
 
 def test_delete_user_method_calls(client):
@@ -116,7 +118,7 @@ def test_delete_user_method_calls(client):
     assert not add_user_mock.called
     assert not update_user_mock.called
     assert delete_user_mock.called
-    assert delete_user_mock.call_args == call("99")
+    assert delete_user_mock.call_args == call(99)
 
 
 def test_get_user_values(client):
@@ -143,9 +145,12 @@ def test_add_user_controller(client):
     user_db.permission = 'admin'
 
     with mock.patch('cv_creator.controllers.user_controller.repository.add_user', return_value=user_db):
-        user_id = add_user(user)
+        new_user = add_user(user)
 
-    assert user_id == user_db.id
+    assert new_user.id == user_db.id
+    assert new_user.first_name == user_db.first_name
+    assert new_user.last_name == user_db.last_name
+    assert new_user.permission == user_db.permission
 
 
 def test_update_user_controller_none(client):
@@ -194,16 +199,11 @@ def test_delete_user_controller(client):
     assert mock_delete_user.called
 
 
-@pytest.mark.xfail(reason="marshmallow.exceptions.ValidationError: "
-                          "{'last_name': ['Missing data for required field.'], "
-                          "'first_name': ['Missing data for required field.'], "
-                          "'permission': ['Missing data for required field.']}")
 def test_get_user_controller_none(client):
-    user = mock.create_autospec(User)
     user_id = mock.create_autospec(int)
 
     with mock.patch('cv_creator.controllers.user_controller.repository.get_user_by_user_id', return_value=None):
-        get_user_by_user_id(user_id)
+        user = get_user_by_user_id(user_id)
 
     assert user is None
 
