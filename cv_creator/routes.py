@@ -11,29 +11,29 @@ cv_creator = Blueprint('cv_creator', __name__)
 def user_requests():
     match request.method:
         case 'GET':
-            user_id = request.args.get('userId')
+            user_id = int(request.args.get('userId'))
             user: User = get_user_by_user_id(user_id)
             return make_response(
                 GetUserSchema().dump(user),
                 200
             )
         case 'POST':
-            post_user = User.Schema().load(request.json)
-            new_user: User = add_user(post_user)
+            post_user: User = User.from_json(request.json)
+            user: User = add_user(post_user)
             return make_response(
-                CompleteUserSchema().dump(new_user),
+                CompleteUserSchema().dump(user),
                 201
             )
         case 'PATCH':
-            user_id = request.args.get('userId')
-            post_user = PostUserSchema().dump(request.json)
+            user_id = int(request.args.get('userId'))
+            post_user: User = User().from_json(request.json)
             user: User = update_user(user_id, post_user)
             return make_response(
                 CompleteUserSchema().dump(user),
                 200
             )
         case 'DELETE':
-            user_id = request.args.get('userId')
+            user_id = int(request.args.get('userId'))
             delete_user(user_id)
             return jsonify({'message': f'User with id {user_id} removed!'}), 204
 
@@ -81,7 +81,6 @@ def experience_requests():
 @cv_creator.route('/cv', methods=["GET"])
 def cv_requests():
     return make_response(
-        # get_cv(cv_id)
         200
     )
 
