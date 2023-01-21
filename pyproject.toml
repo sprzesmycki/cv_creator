@@ -15,9 +15,11 @@ marshmallow-dataclass = "^8.5.8"
 python-dotenv = "^0.21.0"
 types-setuptools = "^65.5.0.2"
 types-six = "^1.16.21"
+marshmallow = "^3.19.0"
 
 [tool.poetry.dev-dependencies]
-pytest = "^7.1.2"
+pytest = "^7.2.1"
+pytest-cov = "^4.0.0"
 mypy = "^0.971"
 mock = "^4.0.3"
 sqlalchemy-stubs = "^0.4"

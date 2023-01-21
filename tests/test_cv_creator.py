@@ -153,29 +153,28 @@ def test_add_user_controller(client):
     assert new_user.permission == user_db.permission
 
 
-def test_update_user_controller_none(client):
-    user = mock.create_autospec(User)
+def test_update_user_none(client):
+    user_id = "99"
+    with mock.patch("cv_creator.routes.get_user_by_user_id") as get_user_by_user_id_mock:
+        get_user_by_user_id_mock.return_value = None
+        response = client.patch("/user?userId=%s" % user_id)
 
-    with mock.patch('cv_creator.controllers.user_controller.repository.get_user_by_user_id', return_value=None):
-        user = update_user(user.id, user)
-
-    assert user is None
+    assert response.status_code == 404
+    assert response.json["message"] == ("User with id %s not found!" % user_id)
 
 
 def test_update_user_controller(client):
-    user_db = mock.create_autospec(UserDb)
-    user_db.id = 17
-    user_db.first_name = 'seb'
-    user_db.last_name = 'prz'
-    user_db.permission = 'admin'
+    existing_user = User(id=15, first_name='seba', last_name='prze', permission='user')
+    patch_user = User(first_name='seb', last_name='prz', permission='admin')
 
-    with mock.patch('cv_creator.controllers.user_controller.repository.get_user_by_user_id', return_value=user_db):
-        with mock.patch('cv_creator.controllers.user_controller.repository.update_user', return_value=user_db):
-            patched_user_db = update_user(user_db.id, user_db)
+    with mock.patch('cv_creator.controllers.user_controller.repository.get_user_by_user_id', return_value=existing_user):
+        with mock.patch('cv_creator.controllers.user_controller.repository.update_user', return_value=patch_user):
+            patched_user_db = update_user(existing_user, patch_user)
 
-    assert patched_user_db.first_name == user_db.first_name
-    assert patched_user_db.last_name == user_db.last_name
-    assert patched_user_db.permission == user_db.permission
+    assert patched_user_db.id == existing_user.id
+    assert patched_user_db.first_name == patch_user.first_name
+    assert patched_user_db.last_name == patch_user.last_name
+    assert patched_user_db.permission == patch_user.permission
 
 
 def test_delete_user_controller_none(client):
