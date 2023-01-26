@@ -1,75 +1,44 @@
-from marshmallow import post_load
-from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field
-
-from cv_creator.storage.postgres.db_models import UserDb, UserSkillsDb, UserExperienceDb, SkillsDb, CompanyDb
+import marshmallow
 
 
-class CompleteUserSchema(SQLAlchemySchema):
-    class Meta:
-        model = UserDb
-        include_relationships = True
-        load_instance = True
-
-    id = auto_field()
-    first_name = auto_field()
-    last_name = auto_field()
-    permission = auto_field()
-    user_skills = auto_field()
-    user_experience = auto_field()
-
-    @post_load
-    def make_user(self, data, **kwargs):
-        return UserDb(**data)
+class UserExperienceSerializer(marshmallow.Schema):
+    id = marshmallow.fields.Int(required=True)
+    user_id = marshmallow.fields.Int(required=True)
+    company_id = marshmallow.fields.Int(required=True)
+    job_description = marshmallow.fields.Str(required=True)
+    start_date = marshmallow.fields.DateTime(required=True)
+    end_date = marshmallow.fields.DateTime(required=True)
 
 
-class PostUserSchema(SQLAlchemySchema):
-    class Meta:
-        model = UserDb
-        include_relationships = True
-        load_instance = True
-
-    first_name = auto_field()
-    last_name = auto_field()
-    permission = auto_field()
-    user_skills = auto_field()
-    user_experience = auto_field()
+class UserSkillsSerializer(marshmallow.Schema):
+    user_id = marshmallow.fields.Int(required=True)
+    skill_id = marshmallow.fields.Int(required=True)
+    skill_level = marshmallow.fields.Int(required=True)
 
 
-class GetUserSchema(SQLAlchemySchema):
-    class Meta:
-        model = UserDb
-        include_relationships = True
-        load_instance = True
-
-    first_name = auto_field()
-    last_name = auto_field()
-    user_skills = auto_field()
-    user_experience = auto_field()
+class UserSerializer(marshmallow.Schema):
+    id = marshmallow.fields.Int(required=True)
+    first_name = marshmallow.fields.Str(required=True)
+    last_name = marshmallow.fields.Str(required=True)
+    permission = marshmallow.fields.Str(required=True)
+    user_skills = marshmallow.fields.Nested(UserSkillsSerializer, many=True)
+    user_experience = marshmallow.fields.Nested(UserExperienceSerializer, many=True)
 
 
-class SkillsDbSchema(SQLAlchemySchema):
-    class Meta:
-        model = SkillsDb
-        include_relationships = True
-        load_instance = True
+class SkillsSerializer(marshmallow.Schema):
+    id = marshmallow.fields.Int(required=True)
+    skill_name = marshmallow.fields.Str(required=True)
 
 
-class UserSkillsDbSchema(SQLAlchemySchema):
-    class Meta:
-        model = UserSkillsDb
-        include_relationships = True
-        load_instance = True
+class CompanySerializer(marshmallow.Schema):
+    id = marshmallow.fields.Int(required=True)
+    company_name = marshmallow.fields.Str(required=True)
 
 
-class UserExperienceDbSchema(SQLAlchemySchema):
-    class Meta:
-        model = UserExperienceDb
-        include_relationships = True
-        load_instance = True
-
-
-class CompanyDbSchema(SQLAlchemySchema):
-    class Meta:
-        model = CompanyDb
-        include_relationships = True
-        load_instance = True
+user_schema_without_id = UserSerializer(exclude=('id',))
+user_schema_without_id_and_permission = UserSerializer(exclude=('id', 'permission'))
+user_experience_schema = UserExperienceSerializer()
+user_skills_schema = UserSkillsSerializer()
+user_schema = UserSerializer()
+skills_schema = SkillsSerializer()
+company_schema = CompanySerializer()

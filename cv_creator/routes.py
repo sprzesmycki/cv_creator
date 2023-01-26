@@ -2,7 +2,7 @@ from flask import request, make_response, Blueprint, jsonify
 
 from .controllers.user_controller import get_user_by_user_id, add_user, update_user, delete_user
 from .models.models import User
-from .serializers.db_serializers import GetUserSchema, CompleteUserSchema, PostUserSchema
+from .serializers.db_serializers import user_schema, user_schema_without_id_and_permission
 
 cv_creator = Blueprint('cv_creator', __name__)
 
@@ -14,22 +14,28 @@ def user_requests():
             user_id = int(request.args.get('userId'))
             user: User = get_user_by_user_id(user_id)
             return make_response(
-                GetUserSchema().dump(user),
+                user_schema_without_id_and_permission.dump(user),
                 200
             )
         case 'POST':
             post_user: User = User.from_json(request.json)
             user: User = add_user(post_user)
             return make_response(
-                CompleteUserSchema().dump(user),
+                user_schema.dump(user),
                 201
             )
         case 'PATCH':
             user_id = int(request.args.get('userId'))
-            post_user: User = User().from_json(request.json)
-            user: User = update_user(user_id, post_user)
+            existing_user: User = get_user_by_user_id(user_id)
+            if existing_user is None:
+                return make_response(
+                    jsonify({'message': f'User with id {user_id} not found!'}),
+                    404
+                )
+            user_patch: User = User.from_json(request.json)
+            user: User = update_user(existing_user, user_patch)
             return make_response(
-                CompleteUserSchema().dump(user),
+                user_schema.dump(user),
                 200
             )
         case 'DELETE':
