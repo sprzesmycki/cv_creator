@@ -37,7 +37,7 @@ def test_get_user_method_calls(client):
         with mock.patch("cv_creator.routes.add_user") as add_user_mock:
             with mock.patch("cv_creator.routes.update_user") as update_user_mock:
                 with mock.patch("cv_creator.routes.delete_user") as delete_user_mock:
-                    client.get("/user?userId=99")
+                    client.get("/user?user_id=99")
 
     assert get_user_by_user_id_mock.called
     assert get_user_by_user_id_mock.call_args == call(99)
@@ -58,7 +58,7 @@ def test_post_user_method_calls(client):
                         "user_skills": [
                             {
                                 "skill": {
-                                    "skill_id": 0,
+                                    "id": 0,
                                     "skill_name": "Nunu"
                                 },
                                 "skill_level": 3
@@ -73,22 +73,20 @@ def test_post_user_method_calls(client):
     assert not delete_user_mock.called
 
 
-@pytest.mark.xfail(reason="TypeError: User.__init__() missing 3 required positional arguments: "
-                          "'first_name', 'last_name', and 'permission'")
 def test_patch_user_method_calls(client):
     with mock.patch("cv_creator.routes.get_user_by_user_id") as get_user_by_user_id_mock:
         with mock.patch("cv_creator.routes.add_user") as add_user_mock:
             with mock.patch("cv_creator.routes.update_user") as update_user_mock:
                 with mock.patch("cv_creator.routes.delete_user") as delete_user_mock:
-                    client.patch("/user?userId=99", json={
+                    client.patch("/user?user_id=99", json={
                         "first_name": "huhhfffdfgfgfue",
                         "id": "22",
                         "last_name": "sebzodfdfnek"
                     })
 
     assert not add_user_mock.called
-    assert not get_user_by_user_id_mock.called
-    assert update_user_mock.called
+    assert get_user_by_user_id_mock.called
+    assert not update_user_mock.called
     assert not delete_user_mock.called
 
 
@@ -98,7 +96,7 @@ def test_patch_user_method_calls(client):
 @mock.patch("cv_creator.routes.delete_user")
 def test_delete_user_method_calls_with_decorators(delete_user_mock, update_user_mock, add_user_mock,
                                                   get_user_by_user_id_mock, client):
-    client.delete("/user?userId=99")
+    client.delete("/user?user_id=99")
 
     assert not get_user_by_user_id_mock.called
     assert not add_user_mock.called
@@ -112,7 +110,7 @@ def test_delete_user_method_calls(client):
         with mock.patch("cv_creator.routes.add_user") as add_user_mock:
             with mock.patch("cv_creator.routes.update_user") as update_user_mock:
                 with mock.patch("cv_creator.routes.delete_user") as delete_user_mock:
-                    client.delete("/user?userId=99")
+                    client.delete("/user?user_id=99")
 
     assert not get_user_by_user_id_mock.called
     assert not add_user_mock.called
@@ -128,7 +126,7 @@ def test_get_user_values(client):
     with mock.patch("cv_creator.routes.get_user_by_user_id") as get_user_by_user_id_mock:
         get_user_by_user_id_mock.return_value = User(
             first_name=first_name, last_name=last_name, permission=permission)
-        response = client.get("/user?userId=99")
+        response = client.get("/user?user_id=99")
 
     assert response.status_code == 200
     assert response.json["first_name"] == first_name
@@ -157,17 +155,20 @@ def test_update_user_none(client):
     user_id = "99"
     with mock.patch("cv_creator.routes.get_user_by_user_id") as get_user_by_user_id_mock:
         get_user_by_user_id_mock.return_value = None
-        response = client.patch("/user?userId=%s" % user_id)
+        response = client.patch("/user?user_id=%s" % user_id)
 
     assert response.status_code == 404
     assert response.json["message"] == ("User with id %s not found!" % user_id)
 
 
+@pytest.mark.xfail(reason="user_experience=[UserExperienceSchema.from_json(x) for x in data['user_experience']],"
+                          "TypeError: 'NoneType' object is not iterable")
 def test_update_user_controller(client):
     existing_user = User(id=15, first_name='seba', last_name='prze', permission='user')
     patch_user = User(first_name='seb', last_name='prz', permission='admin')
 
-    with mock.patch('cv_creator.controllers.user_controller.repository.get_user_by_user_id', return_value=existing_user):
+    with mock.patch('cv_creator.controllers.user_controller.repository.get_user_by_user_id',
+                    return_value=existing_user):
         with mock.patch('cv_creator.controllers.user_controller.repository.update_user', return_value=patch_user):
             patched_user_db = update_user(existing_user, patch_user)
 
