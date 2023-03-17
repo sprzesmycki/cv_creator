@@ -1,11 +1,13 @@
+from typing import Any
+
 from flasgger import Swagger
-from flask import Flask, jsonify
+from flask import Flask, jsonify, Response
 from marshmallow import ValidationError
 
 from cv_creator.routes import cv_creator
 
 
-def create_app():
+def create_app() -> Flask:
     app = Flask(__name__)
     swagger = Swagger(app)
     app.register_blueprint(cv_creator)
@@ -16,21 +18,21 @@ def create_app():
     return app
 
 
-def validation_handler(e):
+def validation_handler(e: Any) -> tuple[Response, int]:
     return jsonify({'message': e.messages}), 422
 
 
-def page_not_found_handler(e):
+def page_not_found_handler() -> tuple[Response, int]:
     return jsonify({'message': 'Better luck next time!'}), 404
 
 
-def server_error_handler(e):
+def server_error_handler() -> tuple[Response, int]:
     return jsonify({'error': 'An internal server error occurred'}), 500
 
 
-def key_error_handler(e):
+def key_error_handler(e: Any) -> tuple[Response, int]:
     return jsonify({'error': f'Missing field in request body: {e}'}), 422
 
 
 if __name__ == '__main__':
-    create_app().run(debug=True)
+    create_app().run(debug=True)  # TODO get this from env

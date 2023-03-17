@@ -11,10 +11,10 @@ class UserDb(Base):
     last_name = Column(String, nullable=False)
     permission = Column(String, nullable=False)
 
-    user_skills = relationship('UserSkillsDb', backref='user')
-    user_experience = relationship('UserExperienceDb', backref='user')
+    user_skills = relationship('UserSkillsDb', backref='user')  # type: ignore
+    user_experience = relationship('UserExperienceDb', backref='user')  # type: ignore
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'User(id={self.id!r}, first_name={self.first_name!r}, last_name={self.last_name!r})'
 
 
@@ -23,9 +23,9 @@ class SkillsDb(Base):
     id = Column(Integer, primary_key=True)
     skill_name = Column(String, nullable=False, unique=True)
 
-    user_skills = relationship('UserSkillsDb', backref='skills')
+    user_skills = relationship('UserSkillsDb', backref='skills')  # type: ignore
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'Skills(id={self.id!r}, skill_name={self.skill_name!r}'
 
 
@@ -35,7 +35,7 @@ class UserSkillsDb(Base):
     skill_id = Column(Integer, ForeignKey('skills.id'), nullable=False, primary_key=True)
     skill_level = Column(Integer, nullable=False)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'UserSkills(id={self.id!r}, user_id={self.user_id!r}, ' \
                f'skill_id={self.skill_id!r}, skill_level={self.skill_level!r}) '
 
@@ -49,7 +49,7 @@ class UserExperienceDb(Base):
     start_date = Column(DateTime, nullable=False)
     end_date = Column(DateTime, nullable=False)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'UserExperience(id={self.id!r}, user_id={self.user_id!r}, ' \
                f'company_name={self.company_name!r}, job_description={self.job_description!r}), ' \
                f'start_date={self.start_date!r}, end_date={self.end_date!r}) '
@@ -60,7 +60,7 @@ class CompanyDb(Base):
     id = Column(Integer, primary_key=True)
     company_name = Column(String, nullable=False)
 
-    user_experience = relationship('UserExperienceDb', backref='company')
+    user_experience = relationship('UserExperienceDb', backref='company')  # type: ignore
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'Company(id={self.id!r}, company_name={self.user_id!r}'

@@ -4,7 +4,7 @@ from mock import call
 
 from cv_creator.app import create_app
 from cv_creator.controllers.user_controller import add_user, update_user, delete_user, get_user_by_user_id
-from cv_creator.models.models import User
+from cv_creator.models.models import User, UpdateUser
 from cv_creator.storage.postgres.db_models import UserDb
 
 
@@ -86,7 +86,7 @@ def test_patch_user_method_calls(client):
 
     assert not add_user_mock.called
     assert get_user_by_user_id_mock.called
-    assert not update_user_mock.called
+    assert update_user_mock.called
     assert not delete_user_mock.called
 
 
@@ -96,13 +96,16 @@ def test_patch_user_method_calls(client):
 @mock.patch("cv_creator.routes.delete_user")
 def test_delete_user_method_calls_with_decorators(delete_user_mock, update_user_mock, add_user_mock,
                                                   get_user_by_user_id_mock, client):
-    client.delete("/user?user_id=99")
+    user_id = 99
+    response = client.delete(f"/user?user_id={user_id}")
 
     assert not get_user_by_user_id_mock.called
     assert not add_user_mock.called
     assert not update_user_mock.called
     assert delete_user_mock.called
-    assert delete_user_mock.call_args == call(99)
+    assert delete_user_mock.call_args == call(user_id)
+    assert response.status_code == 200
+    assert response.json["message"] == f'User with id {user_id} removed!'
 
 
 def test_delete_user_method_calls(client):
@@ -161,18 +164,25 @@ def test_update_user_none(client):
     assert response.json["message"] == ("User with id %s not found!" % user_id)
 
 
-@pytest.mark.xfail(reason="user_experience=[UserExperienceSchema.from_json(x) for x in data['user_experience']],"
-                          "TypeError: 'NoneType' object is not iterable")
 def test_update_user_controller(client):
     existing_user = User(id=15, first_name='seba', last_name='prze', permission='user')
-    patch_user = User(first_name='seb', last_name='prz', permission='admin')
+    patch_user = UpdateUser(first_name='seb', last_name='prz', permission='admin')
 
-    with mock.patch('cv_creator.controllers.user_controller.repository.get_user_by_user_id',
-                    return_value=existing_user):
-        with mock.patch('cv_creator.controllers.user_controller.repository.update_user', return_value=patch_user):
-            patched_user_db = update_user(existing_user, patch_user)
+    with mock.patch('cv_creator.controllers.user_controller.repository.update_user', return_value=patch_user):
+        patched_user_db = update_user(existing_user.id, patch_user)
 
-    assert patched_user_db.id == existing_user.id
+    assert patched_user_db.first_name == patch_user.first_name
+    assert patched_user_db.last_name == patch_user.last_name
+    assert patched_user_db.permission == patch_user.permission
+
+
+def test_update_user_controller_one_field(client):
+    existing_user = User(id=15, first_name='seba', last_name='prze', permission='user')
+    patch_user = UpdateUser(last_name='prz')
+
+    with mock.patch('cv_creator.controllers.user_controller.repository.update_user', return_value=patch_user):
+        patched_user_db = update_user(existing_user.id, patch_user)
+
     assert patched_user_db.first_name == patch_user.first_name
     assert patched_user_db.last_name == patch_user.last_name
     assert patched_user_db.permission == patch_user.permission

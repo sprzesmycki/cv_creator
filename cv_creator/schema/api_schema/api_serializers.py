@@ -1,22 +1,15 @@
 from datetime import datetime
 from typing import Optional, List
 
-from pydantic import BaseModel, validator, root_validator
+from pydantic import BaseModel, validator, root_validator, Extra
 
 
 class SkillSchema(BaseModel):
     skill_name: str
-    skill_id: Optional[int] = None
+    id: Optional[int] = None
 
     class Config:
-        orm_mode = True
-
-    @staticmethod
-    def from_json(data):
-        return SkillSchema(
-            skill_name=data['skill_name'],
-            skill_id=data['id'],
-        )
+        extra = Extra.forbid
 
     @validator('skill_name')
     def skill_name_must_be_str(cls, v):
@@ -24,10 +17,10 @@ class SkillSchema(BaseModel):
             raise ValueError('skill_name must be str')
         return v
 
-    @validator('skill_id')
+    @validator('id')
     def skill_id_must_be_int(cls, v):
         if not isinstance(v, int):
-            raise ValueError('skill_id must be int')
+            raise ValueError('id must be int')
         return v
 
 
@@ -36,14 +29,7 @@ class CompanySchema(BaseModel):
     company_id: Optional[int] = None
 
     class Config:
-        orm_mode = True
-
-    @staticmethod
-    def from_json(data):
-        return CompanySchema(
-            company_name=data['company_data'],
-            company_id=data['id'],
-        )
+        extra = Extra.forbid
 
     @validator('company_name')
     def company_name_must_be_str(cls, v):
@@ -65,16 +51,7 @@ class UserExperienceSchema(BaseModel):
     end_date: datetime
 
     class Config:
-        orm_mode = True
-
-    @staticmethod
-    def from_json(data):
-        return UserExperienceSchema(
-            company=CompanySchema.from_json(data['company']),
-            job_description=data['job_description'],
-            start_date=data['start_date'],
-            end_date=data['end_date'],
-        )
+        extra = Extra.forbid
 
     @validator('company')
     def company_must_be_company_schema(cls, v):
@@ -106,14 +83,7 @@ class UserSkillsSchema(BaseModel):
     skill_level: int
 
     class Config:
-        orm_mode = True
-
-    @staticmethod
-    def from_json(data):
-        return UserSkillsSchema(
-            skill=SkillSchema.from_json(data['skill']),
-            skill_level=data['skill_level'],
-        )
+        extra = Extra.forbid
 
     @validator('skill_level')
     def skill_level_must_be_between_1_and_5(cls, v):
@@ -137,18 +107,7 @@ class UserSchema(BaseModel):
     user_skills: List[UserSkillsSchema]
 
     class Config:
-        orm_mode = True
-
-    @staticmethod
-    def from_json(data):
-        return UserSchema(
-            id=data.get('id'),
-            first_name=data['first_name'],
-            last_name=data['last_name'],
-            permission=data['permission'],
-            user_experience=[UserExperienceSchema.from_json(x) for x in data['user_experience']],
-            user_skills=[UserSkillsSchema.from_json(x) for x in data['user_skills']],
-        )
+        extra = Extra.forbid
 
     @validator('first_name')
     def first_name_must_be_string(cls, v):
@@ -180,10 +139,14 @@ class UserSchema(BaseModel):
             raise ValueError('user_skills must be a list')
         return v
 
-    # it checks after from_json method - so its worthless
-    @root_validator
-    def check_extra_fields(cls, values):
-        unexpected_fields = set(values.keys()) - set(cls.__fields__.keys())
-        if unexpected_fields:
-            raise ValueError(f"Unexpected field(s): {', '.join(unexpected_fields)}")
-        return values
+
+class UpdateUserSchema(BaseModel):
+    id: Optional[int] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    permission: Optional[str] = None
+    user_experience: Optional[List[UserExperienceSchema]] = None
+    user_skills: Optional[List[UserSkillsSchema]] = None
+
+    class Config:
+        extra = Extra.forbid
