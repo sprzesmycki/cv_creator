@@ -1,0 +1,12 @@
+Get user by user_id
+---
+parameters:
+      - name: user_id
+        in: query
+        type: integer
+        required: true
+responses:
+    200:
+        description: User
+    404:
+        description: User not found

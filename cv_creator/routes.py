@@ -1,3 +1,4 @@
+from flasgger import swag_from
 from flask import request, make_response, Blueprint, jsonify, Response
 
 from cv_creator.schema.db_schema.db_serializers import user_db_schema, user_db_schema_without_id_and_permission
@@ -9,21 +10,8 @@ cv_creator = Blueprint('cv_creator', __name__)
 
 
 @cv_creator.route('/user', methods=["GET"])
+@swag_from('doc/get_user.yml')
 def get_user_request() -> Response:
-    """
-    Get user by user_id
-    ---
-    parameters:
-          - name: user_id
-            in: query
-            type: integer
-            required: true
-    responses:
-        200:
-            description: User
-        404:
-            description: User not found
-    """
     try:
         user_id: int = int(request.args.get('user_id'))  # validator in pydantic
         # request.args pass to pydantic schema
@@ -40,17 +28,8 @@ def get_user_request() -> Response:
 
 
 @cv_creator.route('/user', methods=["POST"])
+@swag_from('doc/post_user.yml')
 def post_user_request() -> Response:
-    """
-    Post user
-    ---
-    parameters:
-            - name: user
-              in: body
-    responses:
-        201:
-            description: User created successfully
-    """
     UserSchema(**request.json)
     post_user: User = User(**request.json)
     user: User = add_user(post_user)
@@ -61,23 +40,8 @@ def post_user_request() -> Response:
 
 
 @cv_creator.route('/user', methods=["PATCH"])
+@swag_from('doc/patch_user.yml')
 def patch_user_request() -> Response:
-    """
-    Patch user by user_id
-    ---
-    parameters:
-          - name: user_id
-            in: query
-            type: integer
-            required: true
-          - name: user
-            in: body
-    responses:
-        200:
-            description: User
-        404:
-            description: User not found
-    """
     user_id = int(request.args.get('user_id'))
     existing_user: User = get_user_by_user_id(user_id)
     if existing_user is None:
@@ -95,19 +59,8 @@ def patch_user_request() -> Response:
 
 
 @cv_creator.route('/user', methods=["DELETE"])
+@swag_from('doc/delete_user.yml')
 def delete_user_request() -> Response:
-    """
-    Delete user by user_id
-    ---
-    parameters:
-          - name: user_id
-            in: query
-            type: integer
-            required: true
-    responses:
-        204:
-            description: User deleted successfully
-    """
     try:
         user_id: int = int(request.args.get('user_id'))
     except ValueError:

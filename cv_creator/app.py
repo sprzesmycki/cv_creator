@@ -3,6 +3,7 @@ from typing import Any
 from flasgger import Swagger
 from flask import Flask, jsonify, Response
 from marshmallow import ValidationError
+from werkzeug.exceptions import NotFound
 
 from cv_creator.routes import cv_creator
 
@@ -18,15 +19,15 @@ def create_app() -> Flask:
     return app
 
 
-def validation_handler(e: Any) -> tuple[Response, int]:
+def validation_handler(e: ValidationError) -> tuple[Response, int]:
     return jsonify({'message': e.messages}), 422
 
 
-def page_not_found_handler() -> tuple[Response, int]:
+def page_not_found_handler(e: NotFound) -> tuple[Response, int]:
     return jsonify({'message': 'Better luck next time!'}), 404
 
 
-def server_error_handler() -> tuple[Response, int]:
+def server_error_handler(e: SystemError) -> tuple[Response, int]:
     return jsonify({'error': 'An internal server error occurred'}), 500
 
 
