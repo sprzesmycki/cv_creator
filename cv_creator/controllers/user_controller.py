@@ -18,12 +18,9 @@ def get_user_by_user_id(user_id: int) -> Optional[User]:
 
 def add_user(post_user: User) -> Optional[User]:
     user_db: UserDb = repository.add_user(post_user)
-    if user_db is not None:
-        user_dict: dict = user_db_schema.dump(user_db)
-        user: User = User(**user_dict)
-        return user
-    else:
-        return None
+    user_dict: dict = user_db_schema.dump(user_db)
+    user: User = User(**user_dict)
+    return user
 
 
 def update_user(user_id: int, patch_user: UpdateUser) -> Optional[User]:

@@ -1,10 +1,12 @@
+from typing import Optional
+
 from flasgger import swag_from
 from flask import request, make_response, Blueprint, jsonify, Response
 
 from cv_creator.schema.db_schema.db_serializers import user_db_schema, user_db_schema_without_id_and_permission
 from .controllers.user_controller import get_user_by_user_id, add_user, update_user, delete_user
 from .models.models import User, UpdateUser
-from .schema.api_schema.api_serializers import UserSchema, UpdateUserSchema
+from .schema.api_schema.api_serializers import UserSchema, UpdateUserSchema, UserArgsSchema
 
 cv_creator = Blueprint('cv_creator', __name__)
 
@@ -12,15 +14,9 @@ cv_creator = Blueprint('cv_creator', __name__)
 @cv_creator.route('/user', methods=["GET"])
 @swag_from('doc/get_user.yml')
 def get_user_request() -> Response:
-    try:
-        user_id: int = int(request.args.get('user_id'))  # validator in pydantic
-        # request.args pass to pydantic schema
-    except ValueError:
-        return make_response(
-            jsonify({'error': 'user_id is not an integer'}),
-            400
-        )
-    user: User = get_user_by_user_id(user_id)
+    args = request.args.to_dict()
+    validated_args = UserArgsSchema(**args)
+    user: Optional[User] = get_user_by_user_id(validated_args.user_id)
     return make_response(
         user_db_schema_without_id_and_permission.dump(user),
         200
@@ -42,16 +38,17 @@ def post_user_request() -> Response:
 @cv_creator.route('/user', methods=["PATCH"])
 @swag_from('doc/patch_user.yml')
 def patch_user_request() -> Response:
-    user_id = int(request.args.get('user_id'))
-    existing_user: User = get_user_by_user_id(user_id)
+    args = request.args.to_dict()
+    validated_args = UserArgsSchema(**args)
+    existing_user: User = get_user_by_user_id(validated_args.user_id)
     if existing_user is None:
         return make_response(
-            jsonify({'message': f'User with id {user_id} not found!'}),
+            jsonify({'message': f'User with id {validated_args.user_id} not found!'}),
             404
         )
     UpdateUserSchema(**request.json)
     patch_user: UpdateUser = UpdateUser(**request.json)
-    user: User = update_user(user_id, patch_user)
+    user: User = update_user(validated_args.user_id, patch_user)
     return make_response(
         user_db_schema.dump(user),
         200
@@ -61,16 +58,11 @@ def patch_user_request() -> Response:
 @cv_creator.route('/user', methods=["DELETE"])
 @swag_from('doc/delete_user.yml')
 def delete_user_request() -> Response:
-    try:
-        user_id: int = int(request.args.get('user_id'))
-    except ValueError:
-        return make_response(
-            jsonify({'error': 'user_id is not an integer'}),
-            400
-        )
-    delete_user(user_id)
+    args = request.args.to_dict()
+    validated_args = UserArgsSchema(**args)
+    delete_user(validated_args.user_id)
     return make_response(
-        jsonify({'message': f'User with id {user_id} removed!'}),
+        jsonify({'message': f'User with id {validated_args.user_id} removed!'}),
         200
     )
 

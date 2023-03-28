@@ -150,3 +150,10 @@ class UpdateUserSchema(BaseModel):
 
     class Config:
         extra = Extra.forbid
+
+
+class UserArgsSchema(BaseModel):
+    user_id: int
+
+    class Config:
+        extra = Extra.forbid
