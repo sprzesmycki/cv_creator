@@ -14,5 +14,5 @@ def test_validation_handler_marshmallow(client):
         mock_error = marshmallow.ValidationError(message='Invalid input')
         response, status_code = validation_handler_marshmallow(mock_error)
 
-        assert status_code == 422
+        assert status_code == 500
         assert response.get_json() == {'message': ['Invalid input']}

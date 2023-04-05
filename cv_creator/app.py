@@ -6,7 +6,6 @@ from flasgger import Swagger
 from flask import Flask, jsonify, Response
 from werkzeug.exceptions import NotFound
 
-from cv_creator.config import config
 from cv_creator.routes import cv_creator
 
 
@@ -23,7 +22,7 @@ def create_app() -> Flask:
 
 
 def validation_handler_marshmallow(e: marshmallow.ValidationError) -> tuple[Response, int]:
-    return jsonify({'message': e.messages}), 422
+    return jsonify({'message': e.messages}), 500
 
 
 def validation_handler_pydantic(e: pydantic.ValidationError) -> tuple[Response, int]:
@@ -43,5 +42,4 @@ def key_error_handler(e: Any) -> tuple[Response, int]:
 
 
 if __name__ == '__main__':
-    debug_mode = config.get("DEBUG") == "True"
-    create_app().run(debug=debug_mode)
+    create_app().run()

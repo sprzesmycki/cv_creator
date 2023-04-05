@@ -16,7 +16,7 @@ def get_user_by_user_id(user_id: int) -> Optional[User]:
         return None
 
 
-def add_user(post_user: User) -> Optional[User]:
+def add_user(post_user: User) -> User:
     user_db: UserDb = repository.add_user(post_user)
     user_dict: dict = user_db_schema.dump(user_db)
     user: User = User(**user_dict)

@@ -14,8 +14,7 @@ cv_creator = Blueprint('cv_creator', __name__)
 @cv_creator.route('/user', methods=["GET"])
 @swag_from('doc/get_user.yml')
 def get_user_request() -> Response:
-    args = request.args.to_dict()
-    validated_args = UserArgsSchema(**args)
+    validated_args = UserArgsSchema.parse_obj(request.args)
     user: Optional[User] = get_user_by_user_id(validated_args.user_id)
     return make_response(
         user_db_schema_without_id_and_permission.dump(user),
@@ -26,8 +25,8 @@ def get_user_request() -> Response:
 @cv_creator.route('/user', methods=["POST"])
 @swag_from('doc/post_user.yml')
 def post_user_request() -> Response:
-    UserSchema(**request.json)
-    post_user: User = User(**request.json)
+    validated_user = UserSchema.parse_obj(request.json)
+    post_user: User = User(**dict(validated_user))
     user: User = add_user(post_user)
     return make_response(
         user_db_schema.dump(user),
@@ -46,8 +45,13 @@ def patch_user_request() -> Response:
             jsonify({'message': f'User with id {validated_args.user_id} not found!'}),
             404
         )
-    UpdateUserSchema(**request.json)
-    patch_user: UpdateUser = UpdateUser(**request.json)
+    validated_user = UpdateUserSchema.parse_obj(request.json)
+    patch_user: Optional[UpdateUser] = UpdateUser(**dict(validated_user))
+    if patch_user is None:
+        return make_response(
+            jsonify({'message': 'No data to update!'}),
+            400
+        )
     user: User = update_user(validated_args.user_id, patch_user)
     return make_response(
         user_db_schema.dump(user),
