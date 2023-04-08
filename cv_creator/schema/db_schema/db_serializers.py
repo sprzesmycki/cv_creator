@@ -35,8 +35,10 @@ class DbCompanySerializer(marshmallow.Schema):
     company_name = marshmallow.fields.Str(required=True)
 
 
-user_db_schema_without_id = DbUserSerializer(exclude=('id',))
-user_db_schema_without_id_and_permission = DbUserSerializer(exclude=('id', 'permission'))
+user_db_schema_without_id = DbUserSerializer(exclude=("id",))
+user_db_schema_without_id_and_permission = DbUserSerializer(
+    exclude=("id", "permission")
+)
 user_experience_db_schema = DbUserExperienceSerializer()
 user_skills_db_schema = DbUserSkillsSerializer()
 user_db_schema = DbUserSerializer()

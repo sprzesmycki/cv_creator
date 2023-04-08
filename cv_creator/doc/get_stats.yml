@@ -1,0 +1,14 @@
+Get stats for skill
+---
+parameters:
+  - name: skill_id
+    in: query
+    type: integer
+    required: true
+  - name: skill_level
+    in: query
+    type: integer
+    required: true
+responses:
+  200:
+    description: Count

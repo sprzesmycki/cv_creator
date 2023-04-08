@@ -12,4 +12,21 @@ TO READ:
 
 * pytest parametrize
 
+* db = SessionLocal() - jako dependency injection
+
+
 TO CLARIFY:
+
+
+
+
+----
+
+
+Things to do in order:
+* endpoints for cv skills and experience
+* auth
+* permissions
+
+
+

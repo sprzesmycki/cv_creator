@@ -11,10 +11,10 @@ class SkillSchema(BaseModel):
     class Config:
         extra = Extra.forbid
 
-    @validator('skill_name')
+    @validator("skill_name")
     def skill_name_must_be_shorter_than_20_chars(cls, v):
         if len(v) > 20:
-            raise ValueError('skill_name must be shorter than 20 chars')
+            raise ValueError("skill_name must be shorter than 20 chars")
         return v
 
 
@@ -43,10 +43,10 @@ class UserSkillsSchema(BaseModel):
     class Config:
         extra = Extra.forbid
 
-    @validator('skill_level')
+    @validator("skill_level")
     def skill_level_must_be_between_1_and_5(cls, v):
         if v < 1 or v > 5:
-            raise ValueError('Skill level must be between 1 and 5')
+            raise ValueError("Skill level must be between 1 and 5")
         return v
 
 
@@ -61,10 +61,10 @@ class UserSchema(BaseModel):
     class Config:
         extra = Extra.forbid
 
-    @validator('permission')
+    @validator("permission")
     def permission_must_be_admin_or_user(cls, v):
-        if v != 'admin' and v != 'user': #problably should use some kind of enum
-            raise ValueError('Permission must be admin or user')
+        if v != "admin" and v != "user":  # problably should use some kind of enum
+            raise ValueError("Permission must be admin or user")
         return v
 
 
@@ -79,15 +79,23 @@ class UpdateUserSchema(BaseModel):
     class Config:
         extra = Extra.forbid
 
-    @validator('permission')
+    @validator("permission")
     def permission_must_be_admin_or_user(cls, v):
-        if v != 'admin' and v != 'user': #problably should use some kind of enum
-            raise ValueError('Permission must be admin or user')
+        if v != "admin" and v != "user":  # probably should use some kind of enum
+            raise ValueError("Permission must be admin or user")
         return v
 
 
 class UserArgsSchema(BaseModel):
     user_id: int
+
+    class Config:
+        extra = Extra.forbid
+
+
+class StatsArgsSchema(BaseModel):
+    skill_id: int
+    skill_level: int
 
     class Config:
         extra = Extra.forbid
