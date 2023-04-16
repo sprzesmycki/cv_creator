@@ -32,16 +32,6 @@ def test_validation_handler_pydantic(client):
     assert response.get_json() == {
         "details": [
             {
-                "loc": ["user_experience"],
-                "msg": "field required",
-                "type": "value_error.missing",
-            },
-            {
-                "loc": ["user_skills"],
-                "msg": "field required",
-                "type": "value_error.missing",
-            },
-            {
                 "loc": ["email"],
                 "msg": "extra fields not permitted",
                 "type": "value_error.extra",

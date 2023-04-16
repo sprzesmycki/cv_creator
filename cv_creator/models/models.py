@@ -8,6 +8,9 @@ class Skill:
     skill_name: str
     skill_id: Optional[int] = None
 
+    def to_dict(self) -> Dict[str, Any]:
+        return {k: v for k, v in asdict(self).items() if v}
+
 
 @dataclass
 class Company:
@@ -21,6 +24,22 @@ class UserExperience:
     job_description: str
     start_date: datetime
     end_date: datetime
+    id: Optional[int] = field(default=None, repr=False)
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {k: v for k, v in asdict(self).items() if v}
+
+
+@dataclass
+class UpdateUserExperience:
+    company: Company
+    job_description: str
+    start_date: datetime
+    end_date: datetime
+    id: Optional[int] = field(default=None, repr=False)
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {k: v for k, v in asdict(self).items() if v}
 
 
 @dataclass

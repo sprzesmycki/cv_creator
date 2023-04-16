@@ -27,10 +27,22 @@ class CompanySchema(BaseModel):
 
 
 class UserExperienceSchema(BaseModel):
+    user_experience_id: Optional[int] = None
     company: CompanySchema
     job_description: str
     start_date: datetime
     end_date: datetime
+
+    class Config:
+        extra = Extra.forbid
+
+
+class UpdateUserExperienceSchema(BaseModel):
+    user_experience_id: int
+    company: Optional[CompanySchema] = None
+    job_description: Optional[str] = None
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
 
     class Config:
         extra = Extra.forbid
@@ -55,8 +67,6 @@ class UserSchema(BaseModel):
     first_name: str
     last_name: str
     permission: str
-    user_experience: List[UserExperienceSchema]
-    user_skills: List[UserSkillsSchema]
 
     class Config:
         extra = Extra.forbid
@@ -88,6 +98,13 @@ class UpdateUserSchema(BaseModel):
 
 class UserArgsSchema(BaseModel):
     user_id: int
+
+    class Config:
+        extra = Extra.forbid
+
+
+class SkillArgsSchema(BaseModel):
+    skill_id: int
 
     class Config:
         extra = Extra.forbid

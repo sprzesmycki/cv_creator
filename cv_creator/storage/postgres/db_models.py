@@ -18,8 +18,8 @@ class UserDb(Base):
         return f"User(id={self.id!r}, first_name={self.first_name!r}, last_name={self.last_name!r})"
 
 
-class SkillsDb(Base):
-    __tablename__ = "skills"
+class SkillDb(Base):
+    __tablename__ = "skill"
     id = Column(Integer, primary_key=True)
     skill_name = Column(String, nullable=False, unique=True)
 

@@ -1,10 +1,9 @@
 from cv_creator.models.models import User, UpdateUser
-from cv_creator.storage.postgres.database import SessionLocal
 from cv_creator.storage.postgres.db_models import UserDb
 
 
 class UserRepository:
-    def __init__(self, db: SessionLocal):
+    def __init__(self, db):
         self.db = db
 
     def get_user_by_user_id(self, user_id: int) -> UserDb:

@@ -1,5 +1,5 @@
 from cv_creator.storage.postgres.database import SessionLocal
-from cv_creator.storage.postgres.stats_repository import SkillRepository
+from cv_creator.storage.postgres.skill_repository import SkillRepository
 
 
 def get_users_count_with_skill(skill_id, skill_level):

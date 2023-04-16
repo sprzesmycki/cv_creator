@@ -35,13 +35,6 @@ def test_post_user_method_calls(client):
                             "first_name": "seb",
                             "last_name": "as",
                             "permission": "admin",
-                            "user_skills": [
-                                {
-                                    "skill": {"id": 0, "skill_name": "Nunu"},
-                                    "skill_level": 3,
-                                }
-                            ],
-                            "user_experience": [],
                         },
                     )
 

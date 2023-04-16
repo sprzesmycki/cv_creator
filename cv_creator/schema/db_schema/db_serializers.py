@@ -25,7 +25,7 @@ class DbUserSerializer(marshmallow.Schema):
     user_experience = marshmallow.fields.Nested(DbUserExperienceSerializer, many=True)
 
 
-class DbSkillsSerializer(marshmallow.Schema):
+class DbSkillSerializer(marshmallow.Schema):
     id = marshmallow.fields.Int(required=True)
     skill_name = marshmallow.fields.Str(required=True)
 
@@ -42,5 +42,5 @@ user_db_schema_without_id_and_permission = DbUserSerializer(
 user_experience_db_schema = DbUserExperienceSerializer()
 user_skills_db_schema = DbUserSkillsSerializer()
 user_db_schema = DbUserSerializer()
-skills_db_schema = DbSkillsSerializer()
+skill_db_schema = DbSkillSerializer()
 company_db_schema = DbCompanySerializer()
