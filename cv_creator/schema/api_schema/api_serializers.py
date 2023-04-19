@@ -6,7 +6,6 @@ from pydantic import BaseModel, validator, Extra
 
 class SkillSchema(BaseModel):
     skill_name: str
-    id: Optional[int] = None
 
     class Config:
         extra = Extra.forbid
@@ -20,14 +19,12 @@ class SkillSchema(BaseModel):
 
 class CompanySchema(BaseModel):
     company_name: str
-    company_id: Optional[int] = None
 
     class Config:
         extra = Extra.forbid
 
 
 class UserExperienceSchema(BaseModel):
-    user_experience_id: Optional[int] = None
     company: CompanySchema
     job_description: str
     start_date: datetime
@@ -38,7 +35,7 @@ class UserExperienceSchema(BaseModel):
 
 
 class UpdateUserExperienceSchema(BaseModel):
-    user_experience_id: int
+    id: int
     company: Optional[CompanySchema] = None
     job_description: Optional[str] = None
     start_date: Optional[datetime] = None
@@ -97,14 +94,17 @@ class UpdateUserSchema(BaseModel):
 
 
 class UserArgsSchema(BaseModel):
-    user_id: int
+    id: int
 
     class Config:
         extra = Extra.forbid
 
 
+# probably can merge those schemas (UserArgsSchema, SkillArgsSchema) to one with id
+
+
 class SkillArgsSchema(BaseModel):
-    skill_id: int
+    id: int
 
     class Config:
         extra = Extra.forbid

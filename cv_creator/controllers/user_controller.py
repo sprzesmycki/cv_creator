@@ -42,6 +42,8 @@ def delete_user(user_id: int) -> None:
     user_db: UserDb = UserRepository(db).get_user_by_user_id(user_id)
     if user_db is not None:
         UserRepository(db).delete_user(user_db)
+    else:
+        raise ValueError("User does not exist")
 
 
 def get_user_experience_by_user_id(user_id: int) -> list[UserExperience]:
@@ -55,7 +57,7 @@ def get_user_experience_by_user_id(user_id: int) -> list[UserExperience]:
 
 
 def get_user_experience_by_user_experience_id(
-        user_experience_id: int,
+    user_experience_id: int,
 ) -> UserExperience:
     db = SessionLocal()
     user_experience: UserExperienceDb = UserExperienceRepository(
@@ -66,7 +68,7 @@ def get_user_experience_by_user_experience_id(
 
 
 def add_user_experience(
-        user_id: int, user_experience: UserExperience
+    user_id: int, user_experience: UserExperience
 ) -> UserExperience:
     db = SessionLocal()
     user_experience_db: UserExperienceDb = UserExperienceRepository(
@@ -77,7 +79,7 @@ def add_user_experience(
 
 
 def update_user_experience(
-        user_experience_id: int, user_experience: UserExperience
+    user_experience_id: int, user_experience: UserExperience
 ) -> UserExperience:
     db = SessionLocal()
     user_experience_db: UserExperienceDb

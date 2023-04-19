@@ -11,7 +11,7 @@ class UserExperienceRepository:
         return experiences
 
     def add_user_experience(
-            self, user_id: int, user_experience: UserExperience
+        self, user_id: int, user_experience: UserExperience
     ) -> UserExperienceDb:
         experience_dict = user_experience.to_dict()
         experience_dict["user_id"] = user_id
@@ -29,7 +29,7 @@ class UserExperienceRepository:
         return experience
 
     def update_user_experience(
-            self, user_experience_id: int, user_experience: UserExperience
+        self, user_experience_id: int, user_experience: UserExperience
     ) -> UserExperienceDb:
         experience_dict = user_experience.to_dict()
         self.db.query(UserExperienceDb).filter(

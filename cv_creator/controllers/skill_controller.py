@@ -31,3 +31,5 @@ def delete_skill(skill_id: int) -> None:
     skill_db: SkillDb = SkillRepository(db).get_skill_by_skill_id(skill_id)
     if skill_db is not None:
         SkillRepository(db).delete_skill(skill_db)
+    else:
+        raise ValueError("Skill does not exist")

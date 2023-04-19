@@ -1,8 +1,8 @@
-"""postgres
+"""db upgrade
 
-Revision ID: a2cbf939122d
+Revision ID: a5fc1347a812
 Revises: 
-Create Date: 2022-08-23 17:55:51.077568
+Create Date: 2023-04-18 11:25:32.190469
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = "a2cbf939122d"
+revision = "a5fc1347a812"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -25,7 +25,7 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
-        "skills",
+        "skill",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("skill_name", sa.String(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
@@ -64,7 +64,7 @@ def upgrade() -> None:
         sa.Column("skill_level", sa.Integer(), nullable=False),
         sa.ForeignKeyConstraint(
             ["skill_id"],
-            ["skills.id"],
+            ["skill.id"],
         ),
         sa.ForeignKeyConstraint(
             ["user_id"],
@@ -80,6 +80,6 @@ def downgrade() -> None:
     op.drop_table("user_skills")
     op.drop_table("user_experience")
     op.drop_table("user")
-    op.drop_table("skills")
+    op.drop_table("skill")
     op.drop_table("company")
     # ### end Alembic commands ###

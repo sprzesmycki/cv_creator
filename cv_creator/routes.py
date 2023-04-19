@@ -40,7 +40,7 @@ cv_creator = Blueprint("cv_creator", __name__)
 @swag_from("doc/get_user.yml")
 def get_user_request() -> Response:
     validated_args = UserArgsSchema.parse_obj(request.args)
-    user: Optional[User] = get_user_by_user_id(validated_args.user_id)
+    user: Optional[User] = get_user_by_user_id(validated_args.id)
     return make_response(user_db_schema_without_id_and_permission.dump(user), 200)
 
 
@@ -57,17 +57,17 @@ def post_user_request() -> Response:
 @swag_from("doc/patch_user.yml")
 def patch_user_request() -> Response:
     validated_args = UserArgsSchema.parse_obj(request.args)
-    existing_user: Optional[User] = get_user_by_user_id(validated_args.user_id)
+    existing_user: Optional[User] = get_user_by_user_id(validated_args.id)
     if existing_user is None:
         return make_response(
-            jsonify({"message": f"User with id {validated_args.user_id} not found!"}),
+            jsonify({"message": f"User with id {validated_args.id} not found!"}),
             404,
         )
     validated_user = UpdateUserSchema.parse_obj(request.json)
     patch_user: Optional[UpdateUser] = UpdateUser(**dict(validated_user))
     if patch_user is None:
         return make_response(jsonify({"message": "No data to update!"}), 400)
-    user: Optional[User] = update_user(validated_args.user_id, patch_user)
+    user: Optional[User] = update_user(validated_args.id, patch_user)
     return make_response(user_db_schema.dump(user), 200)
 
 
@@ -75,9 +75,9 @@ def patch_user_request() -> Response:
 @swag_from("doc/delete_user.yml")
 def delete_user_request() -> Response:
     validated_args = UserArgsSchema.parse_obj(request.args)
-    delete_user(validated_args.user_id)
+    delete_user(validated_args.id)
     return make_response(
-        jsonify({"message": f"User with id {validated_args.user_id} removed!"}), 200
+        jsonify({"message": f"User with id {validated_args.id} removed!"}), 200
     )
 
 
@@ -85,7 +85,7 @@ def delete_user_request() -> Response:
 # @swag_from("doc/get_skill.yml")
 def get_skill_request() -> Response:
     validated_args = SkillArgsSchema.parse_obj(request.args)
-    skill: Optional[Skill] = get_skill_by_skill_id(validated_args.skill_id)
+    skill: Optional[Skill] = get_skill_by_skill_id(validated_args.id)
     return make_response(skill_db_schema.dump(skill), 200)
 
 
@@ -102,9 +102,9 @@ def post_skill_request() -> Response:
 # @swag_from("doc/delete_skill.yml")
 def delete_skill_request() -> Response:
     validated_args = SkillArgsSchema.parse_obj(request.args)
-    delete_skill(validated_args.skill_id)
+    delete_skill(validated_args.id)
     return make_response(
-        jsonify({"message": f"Skill with id {validated_args.skill_id} removed!"}), 200
+        jsonify({"message": f"Skill with id {validated_args.id} removed!"}), 200
     )
 
 
@@ -112,13 +112,13 @@ def delete_skill_request() -> Response:
 # @swag_from("doc/get_user_experience.yml")
 def get_user_experience_request() -> Response:
     validated_args = UserArgsSchema.parse_obj(request.args)
-    user: Optional[User] = get_user_by_user_id(validated_args.user_id)
+    user: Optional[User] = get_user_by_user_id(validated_args.id)
     if user is None:
         return make_response(
-            jsonify({"message": f"User with id {validated_args.user_id} not found!"}),
+            jsonify({"message": f"User with id {validated_args.id} not found!"}),
             404,
         )
-    user_experience = get_user_experience_by_user_id(validated_args.user_id)
+    user_experience = get_user_experience_by_user_id(validated_args.id)
     return make_response(user_experience_db_schema.dump(user_experience), 200)
 
 
@@ -129,7 +129,7 @@ def post_user_experience_request() -> Response:
     validated_user_experience = UserExperienceSchema.parse_obj(request.json)
     post_experience: UserExperience = UserExperience(**dict(validated_user_experience))
     user_experience: UserExperience = add_user_experience(
-        validated_args.user_id, post_experience
+        validated_args.id, post_experience
     )
     return make_response(user_db_schema.dump(user_experience), 201)
 
@@ -138,18 +138,16 @@ def post_user_experience_request() -> Response:
 # @swag_from("doc/patch_user_experience.yml")
 def patch_user_experience_request() -> Response:
     validated_args = UserArgsSchema.parse_obj(request.args)
-    existing_user: Optional[User] = get_user_by_user_id(validated_args.user_id)
+    existing_user: Optional[User] = get_user_by_user_id(validated_args.id)
     if existing_user is None:
         return make_response(
-            jsonify({"message": f"User with id {validated_args.user_id} not found!"}),
+            jsonify({"message": f"User with id {validated_args.id} not found!"}),
             404,
         )
     validated_user_experience = UpdateUserExperienceSchema.parse_obj(request.json)
     user_experience: Optional[
         UserExperience
-    ] = get_user_experience_by_user_experience_id(
-        validated_user_experience.user_experience_id
-    )
+    ] = get_user_experience_by_user_experience_id(validated_user_experience.id)
     if user_experience is None:
         return make_response(
             jsonify({"message": f"User experience not found!"}),
@@ -160,7 +158,7 @@ def patch_user_experience_request() -> Response:
         **dict(validated_user_experience)
     )
     updated_user_experience: Optional[UserExperience] = update_user_experience(
-        validated_user_experience.user_experience_id, patch_user_experience
+        validated_user_experience.id, patch_user_experience
     )
     return make_response(user_experience_db_schema.dump(updated_user_experience), 200)
 
@@ -169,9 +167,9 @@ def patch_user_experience_request() -> Response:
 # @swag_from("doc/delete_user_experience.yml")
 def delete_user_experience_request() -> Response:
     validated_args = UserArgsSchema.parse_obj(request.args)
-    delete_user(validated_args.user_id)
+    delete_user(validated_args.id)
     return make_response(
-        jsonify({"message": f"User with id {validated_args.user_id} removed!"}), 200
+        jsonify({"message": f"User with id {validated_args.id} removed!"}), 200
     )
 
 

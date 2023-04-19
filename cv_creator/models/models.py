@@ -1,12 +1,12 @@
 from dataclasses import field, dataclass, asdict
-from datetime import datetime
+from datetime import date
 from typing import List, Optional, Any, Dict
 
 
 @dataclass
 class Skill:
     skill_name: str
-    skill_id: Optional[int] = None
+    id: Optional[int] = field(default=None, repr=False)
 
     def to_dict(self) -> Dict[str, Any]:
         return {k: v for k, v in asdict(self).items() if v}
@@ -15,15 +15,18 @@ class Skill:
 @dataclass
 class Company:
     company_name: str
-    company_id: Optional[int] = None
+    id: Optional[int] = field(default=None, repr=False)
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {k: v for k, v in asdict(self).items() if v}
 
 
 @dataclass
 class UserExperience:
     company: Company
     job_description: str
-    start_date: datetime
-    end_date: datetime
+    start_date: date
+    end_date: date
     id: Optional[int] = field(default=None, repr=False)
 
     def to_dict(self) -> Dict[str, Any]:
@@ -34,8 +37,8 @@ class UserExperience:
 class UpdateUserExperience:
     company: Company
     job_description: str
-    start_date: datetime
-    end_date: datetime
+    start_date: date
+    end_date: date
     id: Optional[int] = field(default=None, repr=False)
 
     def to_dict(self) -> Dict[str, Any]:
@@ -46,6 +49,9 @@ class UpdateUserExperience:
 class UserSkills:
     skill: Skill
     skill_level: int
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {k: v for k, v in asdict(self).items() if v}
 
 
 @dataclass

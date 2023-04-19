@@ -17,7 +17,6 @@ def test_add_user_controller(client):
     user_db.first_name = "seb"
     user_db.last_name = "prz"
     user_db.permission = "admin"
-
     with mock.patch(
         "cv_creator.controllers.user_controller.UserRepository.add_user",
         return_value=user_db,

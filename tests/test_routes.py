@@ -13,7 +13,7 @@ def test_get_user_method_calls(client):
         with mock.patch("cv_creator.routes.add_user") as add_user_mock:
             with mock.patch("cv_creator.routes.update_user") as update_user_mock:
                 with mock.patch("cv_creator.routes.delete_user") as delete_user_mock:
-                    client.get("/user?user_id=99")
+                    client.get("/user?id=99")
 
     assert get_user_by_user_id_mock.called
     assert get_user_by_user_id_mock.call_args == call(99)
@@ -52,7 +52,7 @@ def test_patch_user_method_calls(client):
             with mock.patch("cv_creator.routes.update_user") as update_user_mock:
                 with mock.patch("cv_creator.routes.delete_user") as delete_user_mock:
                     client.patch(
-                        "/user?user_id=99",
+                        "/user?id=99",
                         json={
                             "first_name": "huhhfffdfgfgfue",
                             "id": "22",
@@ -74,7 +74,7 @@ def test_delete_user_method_calls_with_decorators(
     delete_user_mock, update_user_mock, add_user_mock, get_user_by_user_id_mock, client
 ):
     user_id = 99
-    response = client.delete(f"/user?user_id={user_id}")
+    response = client.delete(f"/user?id={user_id}")
 
     assert not get_user_by_user_id_mock.called
     assert not add_user_mock.called
@@ -92,7 +92,7 @@ def test_delete_user_method_calls(client):
         with mock.patch("cv_creator.routes.add_user") as add_user_mock:
             with mock.patch("cv_creator.routes.update_user") as update_user_mock:
                 with mock.patch("cv_creator.routes.delete_user") as delete_user_mock:
-                    client.delete("/user?user_id=99")
+                    client.delete("/user?id=99")
 
     assert not get_user_by_user_id_mock.called
     assert not add_user_mock.called
@@ -111,7 +111,7 @@ def test_get_user_values(client):
         get_user_by_user_id_mock.return_value = User(
             first_name=first_name, last_name=last_name, permission=permission
         )
-        response = client.get("/user?user_id=99")
+        response = client.get("/user?id=99")
 
     assert response.status_code == 200
     assert response.json["first_name"] == first_name
@@ -125,7 +125,7 @@ def test_update_user_none(client):
         "cv_creator.routes.get_user_by_user_id"
     ) as get_user_by_user_id_mock:
         get_user_by_user_id_mock.return_value = None
-        response = client.patch("/user?user_id=%s" % user_id)
+        response = client.patch("/user?id=%s" % user_id)
 
     assert response.status_code == 404
     assert response.json["message"] == ("User with id %s not found!" % user_id)
