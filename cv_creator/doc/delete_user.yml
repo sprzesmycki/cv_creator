@@ -1,0 +1,10 @@
+Delete user by user_id
+---
+parameters:
+      - name: user_id
+        in: query
+        type: integer
+        required: true
+responses:
+    204:
+        description: User deleted successfully

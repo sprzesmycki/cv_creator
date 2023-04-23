@@ -1,0 +1,8 @@
+Post user
+---
+parameters:
+        - name: user
+          in: body
+responses:
+    201:
+        description: User created successfully

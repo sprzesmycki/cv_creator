@@ -1,64 +1,57 @@
-from dataclasses import field
-from datetime import datetime
-from typing import List, Optional
-
-from marshmallow_dataclass import dataclass
+from dataclasses import field, dataclass, asdict
+from datetime import date
+from typing import List, Optional, Any, Dict
 
 
 @dataclass
-class Skills:
+class Skill:
     skill_name: str
-    skill_id: Optional[int] = None
+    id: Optional[int] = field(default=None, repr=False)
 
-    @staticmethod
-    def from_json(data):
-        return Skills(
-            skill_name=data['skill_name'],
-            skill_id=data['skill_id'],
-        )
+    def to_dict(self) -> Dict[str, Any]:
+        return {k: v for k, v in asdict(self).items() if v}
 
 
 @dataclass
 class Company:
     company_name: str
-    company_id: Optional[int] = None
+    id: Optional[int] = field(default=None, repr=False)
 
-    @staticmethod
-    def from_json(data):
-        return Company(
-            company_name=data['company_data'],
-            company_id=data['company_id'],
-        )
+    def to_dict(self) -> Dict[str, Any]:
+        return {k: v for k, v in asdict(self).items() if v}
 
 
 @dataclass
 class UserExperience:
     company: Company
     job_description: str
-    start_date: datetime
-    end_date: datetime
+    start_date: date
+    end_date: date
+    id: Optional[int] = field(default=None, repr=False)
 
-    @staticmethod
-    def from_json(data):
-        return UserExperience(
-            company=Company.from_json(data['company']),
-            job_description=data['job_description'],
-            start_date=data['start_date'],
-            end_date=data['end_date'],
-        )
+    def to_dict(self) -> Dict[str, Any]:
+        return {k: v for k, v in asdict(self).items() if v}
+
+
+@dataclass
+class UpdateUserExperience:
+    company: Company
+    job_description: str
+    start_date: date
+    end_date: date
+    id: Optional[int] = field(default=None, repr=False)
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {k: v for k, v in asdict(self).items() if v}
 
 
 @dataclass
 class UserSkills:
-    skill: Skills
+    skill: Skill
     skill_level: int
 
-    @staticmethod
-    def from_json(data):
-        return UserSkills(
-            skill=Skills.from_json(data['skill']),
-            skill_level=data['skill_level'],
-        )
+    def to_dict(self) -> Dict[str, Any]:
+        return {k: v for k, v in asdict(self).items() if v}
 
 
 @dataclass
@@ -70,13 +63,18 @@ class User:
     user_skills: List[UserSkills] = field(default_factory=list)
     user_experience: List[UserExperience] = field(default_factory=list)
 
-    @staticmethod
-    def from_json(data):
-        return User(
-            first_name=data['first_name'],
-            last_name=data['last_name'],
-            permission=data['permission'],
-            id=data.get('id'),
-            user_skills=[UserSkills.from_json(skills) for skills in data['user_skills']],
-            user_experience=[UserExperience.from_json(experience) for experience in data['user_experience']],
-        )
+    def to_dict(self) -> Dict[str, Any]:
+        return {k: v for k, v in asdict(self).items() if v}
+
+
+@dataclass
+class UpdateUser:
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    permission: Optional[str] = None
+    id: Optional[int] = field(default=None, repr=False)
+    user_skills: List[UserSkills] = field(default_factory=list)
+    user_experience: List[UserExperience] = field(default_factory=list)
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {k: v for k, v in asdict(self).items() if v}
